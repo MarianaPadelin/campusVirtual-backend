@@ -38,7 +38,7 @@ mongoose
 
 //Home
 app.get("/", (req, res) => {
-  res.send("<h1>Home</h1>");
+  res.json("Servidor conectado");
 });
 
 // const prueba = async () => {
