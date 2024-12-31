@@ -15,9 +15,11 @@ const PORT = 8080;
 
 app.use(
   cors({
-    origin: ["https://campus-virtual-frontend.vercel.app"],
+    // origin: ["https://campus-virtual-frontend.vercel.app"],
+    origin: "*",
     methods: ["POST", "GET"],
     credentials: true,
+    
   })
 );
 
