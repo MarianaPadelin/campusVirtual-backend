@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 import alumnos_router from "../src/routes/alumnos.router.js";
 import notas_router from "../src/routes/notas.router.js";
-import { alumnosModel } from "../models/alumnos.model.js";
+// import { alumnosModel } from "../models/alumnos.model.js";
 // import __dirname from "./utils.js";
 
 import cors from "cors";
@@ -15,11 +15,10 @@ const PORT = 8080;
 
 app.use(
   cors({
-    origin: ["https://campus-virtual-frontend.vercel.app"],
-
-    methods: ["POST", "GET"],
     credentials: true,
-    
+    origin: "*",
+
+    // methods: ["POST", "GET"],
   })
 );
 
