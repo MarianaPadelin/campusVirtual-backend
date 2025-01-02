@@ -2,8 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 // import { MONGO_URL } from "../config/env.js"
 
-import alumnos_router from "../src/routes/alumnos.router.js";
-import notas_router from "../src/routes/notas.router.js";
+import alumnos_router from "./src/routes/alumnos.router.js";
+import notas_router from "./src/routes/notas.router.js";
 // import { alumnosModel } from "../models/alumnos.model.js";
 // import __dirname from "./utils.js";
 
