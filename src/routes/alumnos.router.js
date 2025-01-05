@@ -5,7 +5,7 @@ const router = Router();
 
 router.get("/", async (req, res) => {
   try {
-    const alumnos = await alumnosModel.find();
+    const alumnos = await alumnosModel.find().sort({apellido: 1});
     return res.json(alumnos);
   } catch (error) {
     return res.json({
@@ -42,8 +42,7 @@ router.post("/", async (req, res) => {
   try {
     const alumno = req.body;
     const response = await alumnosModel.create(alumno);
-
-    res.json({
+    return res.json({
       Status: 200,
       Message: "Alumno ingresado correctamente",
       response,

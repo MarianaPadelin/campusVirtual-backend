@@ -33,7 +33,7 @@ const alumnosSchema = new Schema({
 
 
 
-//Instancio el momdelo para conectarlo a la db. 
+//Instancio el modelo para conectarlo a la db. 
 // El primer parámetro es el nombre de la colección dentro de la db y el segundo es el esquema.
 const alumnosModel = model("alumnos", alumnosSchema);
 

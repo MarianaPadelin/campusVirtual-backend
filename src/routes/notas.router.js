@@ -7,6 +7,7 @@ const router = Router();
 //Get all
 router.get("/", async (req, res) => {
   try {
+
     const notas = await notasModel.find();
     return res.json(notas);
   } catch (error) {

@@ -2,12 +2,9 @@ import { Schema, model } from "mongoose";
 
 const asistenciasSchema = new Schema({
   fecha: date,
-  curso: string,
-  presente: {
-    type: string, 
-    enum: ["presente", "ausente"], 
-    default: "presente"
-}
+  presente: boolean,
+  id_clase: { type: Schema.Types.ObjectId, ref: "clases" },
+  id_alumno: { type: Schema.Types.ObjectId },
 });
 
 //Instancio el momdelo para conectarlo a la db.
