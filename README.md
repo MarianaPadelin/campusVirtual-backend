@@ -8,6 +8,7 @@ Mandar un mail al alumno como comprobante cuando se modifica el casillero de pag
 --Para mandar el front:
 => diseño responsive ✓
 => .env de la ruta del backend ✓
-=> limpiar la db de alumnos
+=> limpiar la db de alumnos ✓
 => crear vista inicio de sesión en el home ✓
 => crear card con info de alumno ✓
+=> agregar un loader
