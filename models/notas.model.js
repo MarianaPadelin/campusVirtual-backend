@@ -1,13 +1,10 @@
 import { Schema, model } from "mongoose";
 
 const notasSchema = new Schema({
-  id_clase: { type: Schema.Types.ObjectId },
+  clase: String,
   id_alumno: { type: Schema.Types.ObjectId },
-  nota: Number,
-  mes: {
-    type: String,
-    enum: ["julio", "diciembre"]
-  },
+  notaJulio: Number,
+  notaDiciembre: Number
 });
 
 //Instancio el momdelo para conectarlo a la db.

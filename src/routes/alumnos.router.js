@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { alumnosModel } from "../../models/alumnos.model.js";
+import { clasesModel } from "../../models/clases.model.js";
 
 const router = Router();
 
 router.get("/", async (req, res) => {
   try {
-    const alumnos = await alumnosModel.find().sort({apellido: 1});
+    const alumnos = await alumnosModel.find().sort({ apellido: 1 });
     return res.json(alumnos);
   } catch (error) {
     return res.json({
@@ -19,16 +20,37 @@ router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-   const alumno = await alumnosModel.find({ _id: id }).populate("notas");
+    const alumno = await alumnosModel.find({ _id: id }).populate("notas");
     if (!alumno) {
       return res.send(`Alumno no encontrado`);
     }
 
-   
     return res.json({
       status: 200,
       message: `Alumno encontrado`,
       alumno,
+    });
+  } catch (error) {
+    return res.json({
+      message: "Error",
+      error,
+    });
+  }
+});
+
+//Ver las notas del alumno
+
+router.get("/:id/notas", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const alumno = await alumnosModel.find({ _id: id }).populate("notas");
+    if (!alumno) {
+      return res.json({ message: `Alumno no encontrado` });
+    }
+    const result = alumno[0].notas;
+
+    return res.json({
+      result
     });
   } catch (error) {
     return res.json({
@@ -65,8 +87,8 @@ router.put("/:id", async (req, res) => {
     if (!alumno) {
       return res.json({ message: `Alumno no encontrado` });
     }
-        // alumno.nota.push("676d7e1eec0d3161e60c57c7");
-        console.log(alumno.nota);
+    // alumno.nota.push("676d7e1eec0d3161e60c57c7");
+    console.log(alumno.nota);
 
     const alumnoActualizado = req.body;
 

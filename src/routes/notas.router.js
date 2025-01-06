@@ -49,14 +49,15 @@ router.post("/", async (req, res) => {
     const response = await notasModel.create(nota);
 
     //push al array de notas en alumno
+    //mandar id de alumno por body?
     //update del alumno
 
-    // const alumno = await alumnosModel.findById("nota del alumno");
-    // alumno.notas.push(nota._id);
-    // const update = await alumnosModel.findByIdAndUpdate(
-    //   { _id: alumno._id },
-    //   alumno
-    // );
+    const alumno = await alumnosModel.findById(response.id_alumno);
+    alumno.notas.push(response._id);
+    const update = await alumnosModel.findByIdAndUpdate(
+      { _id: alumno._id },
+      alumno
+    );
 
     res.json({
       Status: 200,
