@@ -22,7 +22,7 @@ router.get("/:id", async (req, res) => {
 
     const alumno = await alumnosModel.find({ _id: id }).populate("notas");
     if (!alumno) {
-      return res.send(`Alumno no encontrado`);
+      return res.json({message: `Alumno no encontrado`});
     }
 
     return res.json({
@@ -97,6 +97,7 @@ router.put("/:id", async (req, res) => {
       alumnoActualizado
     );
 
+    
     if (response.modifiedCount == 0) {
       return res.json({
         message: "No se pudieron actualizar los datos",

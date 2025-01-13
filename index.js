@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import alumnos_router from "./src/routes/alumnos.router.js";
 import notas_router from "./src/routes/notas.router.js";
 import clases_router from "./src/routes/clases.router.js"
+import pagos_router from "./src/routes/pagos.router.js"
 // import { alumnosModel } from "../models/alumnos.model.js";
 // import __dirname from "./utils.js";
 
@@ -17,8 +18,8 @@ const PORT = 3000;
 app.use(
   cors({
     credentials: true,
-    // origin: "http://localhost:5173",
-    origin: "https://campus-virtual-frontend.vercel.app",
+    origin: "http://localhost:5173",
+    // origin: "https://campus-virtual-frontend.vercel.app",
 
     methods: ["POST", "GET", "PUT", "DELETE"],
   })
@@ -59,9 +60,19 @@ app.get("/", (req, res) => {
 // prueba();
 //node ./src/index.js
 
+
+//middleware para chequear url:
+// app.use((req, res, next) => {
+//   console.log(`${req.method} ${req.url}`);
+//   next();
+// });
+
 //Conexión con las rutas
+
 app.use("/alumnos", alumnos_router);
 app.use("/clases", clases_router)
 app.use("/notas", notas_router);
+app.use("/pagos", pagos_router);
+
 
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));

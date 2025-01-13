@@ -1,29 +1,36 @@
 import { Schema, SchemaTypes, model } from "mongoose";
 
 const alumnosSchema = new Schema({
-    nombre: String,
-    apellido: String,
-    email: {
-        type: String, 
-        unique: true,
-        require: true
+  nombre: String,
+  apellido: String,
+  email: {
+    type: String,
+    unique: true,
+    require: true,
+  },
+  celular: Number,
+  //campo que referencia a la colección de asistencias
+  asistencias: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "asistencias",
     },
-    celular: Number,
-    //campo que referencia a la colección de asistencias
-    asistencias: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "asistencias"
-        }
-    ],
-    notas: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "notas",
-            // id: false
-        }
-    ]
-})
+  ],
+  notas: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "notas",
+      // id: false
+    },
+  ],
+  pagos: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "pagos",
+      // id: false
+    },
+  ],
+});
 
 
 //Populate de las notas con un middleware

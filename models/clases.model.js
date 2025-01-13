@@ -3,6 +3,13 @@ import { Schema, model } from "mongoose";
 const clasesSchema = new Schema({
   nombre: String, 
   profesor: String,
+  año: Number,
+  alumnos:[
+     {
+      type: Schema.Types.ObjectId,
+      ref: "alumnos",
+    },
+  ],
   asistencias: [
     {
       type: Schema.Types.ObjectId,
