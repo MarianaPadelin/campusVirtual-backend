@@ -6,6 +6,8 @@ import alumnos_router from "./src/routes/alumnos.router.js";
 import notas_router from "./src/routes/notas.router.js";
 import clases_router from "./src/routes/clases.router.js"
 import pagos_router from "./src/routes/pagos.router.js"
+import asistencias_router from "./src/routes/asistencias.router.js";
+
 // import { alumnosModel } from "../models/alumnos.model.js";
 // import __dirname from "./utils.js";
 
@@ -61,6 +63,8 @@ app.use("/alumnos", alumnos_router);
 app.use("/clases", clases_router)
 app.use("/notas", notas_router);
 app.use("/pagos", pagos_router);
+app.use("/asistencias", asistencias_router);
+
 
 
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
