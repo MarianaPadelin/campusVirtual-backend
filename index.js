@@ -45,19 +45,7 @@ app.get("/", (req, res) => {
   res.json("Servidor conectado");
 });
 
-// const prueba = async () => {
-//  const alumno = await alumnosModel.findById("67732f229842a0876f668859");
-// alumno.notas.push("676d7e1eec0d3161e60c57c7");
-// console.log(alumno);
-// const update = await alumnosModel.findByIdAndUpdate(
-//   { _id: alumno._id },
-//   alumno
-// );
-// console.log(alumno);
-// console.log(update);
-// }
 
-// prueba();
 //node ./src/index.js
 
 

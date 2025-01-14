@@ -28,13 +28,24 @@ router.get("/:nombreClase/:year", async (req, res) => {
       .populate("alumnos");
 
     if (!clase) {
-      return res.json({ message: "Clase no encontrada" });
+      return res.json({ 
+        status: 404, 
+        message: "Clase no encontrada" });
+    }
+
+    if(!year){
+      return res.json({
+        status: 404,
+        message: "Año no encontrado"
+      })
     }
    
 
     const result = clase.alumnos;
 
-    return res.json(result);
+    return res.json({
+      status: 200,
+      result});
   } catch (error) {
     return res.json({
       message: "Error",

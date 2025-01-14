@@ -2,8 +2,8 @@ import { Schema, model } from "mongoose";
 
 const pagosSchema = new Schema({
   id_alumno: { type: Schema.Types.ObjectId },
-  mes: String,
-  año: { type: Number, default: 2025 },
+  fecha: String,
+  monto: Number
 });
 
 //Instancio el momdelo para conectarlo a la db.

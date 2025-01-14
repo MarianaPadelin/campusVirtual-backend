@@ -19,8 +19,13 @@ Dentro de esta vista, poder agregar una clase desde el selector de clase, agreg�
 
 Para mañana: 
 
-=> Atajar el error de clases inexistentes
+=> Atajar el error de clases inexistentes ✓
+=> Poner un loader 
 => Update de la base de datos de alumnos
 => Nuevo env dev? 
 => Parte de Ver pagos en alumno
-=> Verificar que los pagos sean únicamente numéricos en admin
+=> Verificar que los pagos y notas sean únicamente numéricos en admin ✓
+=> Sacar el selector de mes y poner función de fecha en pagos admin ✓
+
+
+=> Chequear todos los Swal para el manejo de errores

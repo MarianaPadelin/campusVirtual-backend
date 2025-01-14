@@ -4,6 +4,29 @@ import { alumnosModel } from "../../models/alumnos.model.js";
 
 const router = Router();
 
+router.get("/", async (req, res) => {
+  try {
+    const pagos = await pagosModel.find();
+
+    if (!pagos) {
+      return res.json({
+        status: 404,
+        message: "No se encontraron pagos",
+      });
+    }
+
+    return res.json({
+      status: 200,
+      pagos,
+    });
+  } catch (error) {
+    return res.json({
+      message: "Error",
+      error,
+    });
+  }
+});
+
 router.post("/", async (req, res) => {
   try {
     const pago = req.body;
@@ -16,12 +39,11 @@ router.post("/", async (req, res) => {
       { _id: alumno._id },
       alumno
     );
-
-     res.json({
-       Status: 200,
-       Message: "Pago ingresado correctamente",
-       response,
-     });
+    res.json({
+      status: 200,
+      Message: "Pago ingresado correctamente",
+      response,
+    });
   } catch (error) {
     return res.json({
       message: "Error",
@@ -29,6 +51,5 @@ router.post("/", async (req, res) => {
     });
   }
 });
-
 
 export default router;
