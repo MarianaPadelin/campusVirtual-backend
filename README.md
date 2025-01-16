@@ -15,17 +15,19 @@ Dentro de esta vista, poder agregar una clase desde el selector de clase, agreg�
 => crear vista inicio de sesión en el home ✓
 => crear card con info de alumno ✓
 => agregar un loader ✓
-
-
-Para mañana: 
-
 => Atajar el error de clases inexistentes ✓
-=> Poner un loader 
-=> Update de la base de datos de alumnos
-=> Nuevo env dev? 
-=> Parte de Ver pagos en alumno
 => Verificar que los pagos y notas sean únicamente numéricos en admin ✓
 => Sacar el selector de mes y poner función de fecha en pagos admin ✓
 
-
+=> Nuevo env dev
 => Chequear todos los Swal para el manejo de errores
+=> Poner loaders
+
+
+Falta en admin: 
+=> Editar alumno ✓
+=> Agregar "observaciones" en alumno?
+=> Asistencias múltiples ✓
+=> Subir material
+
+=> Inicio de sesión

@@ -125,4 +125,44 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.delete("/:nombreClase/:year/:id", async (req, res) => {
+  try {
+    const { nombreClase, year, id } = req.params;
+
+    const clase = await clasesModel
+      .findOne({ nombre: nombreClase, año: year })
+      .populate("alumnos");
+
+    if (!clase) {
+      return res.json({ message: "Clase no encontrada" });
+    }
+
+    // Use Mongoose's ObjectId to compare properly
+    // const ObjectId = mongoose.Types.ObjectId;
+    const index = clase.alumnos.findIndex(
+      (alumno) => alumno._id.toString() === id
+    );
+
+    if (index > -1) {
+      // Remove the student from the array
+      clase.alumnos.splice(index, 1);
+
+      // Save the updated class
+      await clase.save();
+
+      return res.json({
+        message: "Alumno eliminado de la clase correctamente",
+        clase,
+      });
+    }
+
+    return res.json({ message: "Alumno no encontrado en la clase" });
+  } catch (error) {
+    return res.json({
+      message: "Error",
+      error,
+    });
+  }
+})
+
 export default router;

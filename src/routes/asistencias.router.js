@@ -7,26 +7,27 @@ const router = Router();
 
 router.post("/", async (req, res) => {
   try {
-    const asistencia = req.body;
-    console.log(asistencia)
+    const asistencias = req.body.data;
+    console.log(asistencias);
 
-    // const responses = [];
+    const responses = [];
 
+    for (const asistencia of asistencias) {
+    const response = await asistenciasModel.create(asistencia);
 
-    // for (const asistencia of asistencias) {
-        const response = await asistenciasModel.create(asistencia);
+    const alumno = await alumnosModel.findById(response.id_alumno);
+    alumno.asistencias.push(response._id);
+    await alumnosModel.findByIdAndUpdate({ _id: alumno._id }, alumno);
 
-        const alumno = await alumnosModel.findById(response.id_alumno);
-        alumno.asistencias.push(response._id);
-        await alumnosModel.findByIdAndUpdate({ _id: alumno._id }, alumno);
+    responses.push(response);
+     }
 
-        // responses.push(response);
-    //  }
-    
+   
+
     res.json({
       status: 200,
       Message: "Asistencias ingresadas correctamente",
-      response,
+      responses,
     });
   } catch (error) {
     return res.json({

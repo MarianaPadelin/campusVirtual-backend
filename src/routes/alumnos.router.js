@@ -87,8 +87,6 @@ router.put("/:id", async (req, res) => {
     if (!alumno) {
       return res.json({ message: `Alumno no encontrado` });
     }
-    // alumno.nota.push("676d7e1eec0d3161e60c57c7");
-    console.log(alumno.nota);
 
     const alumnoActualizado = req.body;
 
