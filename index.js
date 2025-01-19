@@ -26,8 +26,8 @@ const secret = "campusSeCret";
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173",
-    // origin: "https://campus-virtual-frontend.vercel.app",
+    // origin: "http://localhost:5173",
+    origin: "https://campus-virtual-frontend.vercel.app",
 
     methods: ["POST", "GET", "PUT", "DELETE"],
   })
