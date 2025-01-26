@@ -1,7 +1,11 @@
 import { Router } from "express";
 import { userModel } from "../../models/user.model.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
-import { createHash, isValidPassword } from "../utils/utils.js";
+import {
+  createHash,
+  generateJWToken,
+  isValidPassword,
+} from "../utils/utils.js";
 
 //usuario o contraseña incorrectos = 401
 //usuario no autorizado = 403
@@ -20,10 +24,11 @@ router.post("/register", async (req, res) => {
       });
     }
     const esAlumno = await alumnosModel.findOne({ email });
-    if (!esAlumno) {
+    const esAdmin = "admin@gmail.com";
+    if (!esAlumno || !esAdmin) {
       return res.json({
         status: 500,
-        message: "Este email no está registrado como un alumno de la escuela",
+        message: "Este email no está registrado",
       });
     }
 
@@ -60,9 +65,7 @@ router.post("/login", async (req, res) => {
         status: 401,
         message: "El usuario no existe",
       });
-
     } else if (!isValidPassword(userExists, password)) {
-
       return res.json({
         status: 401,
         message: "Credenciales incorrectas",
@@ -70,13 +73,39 @@ router.post("/login", async (req, res) => {
     }
 
     //si el login es correcto, inicio la sesión
-    req.session.user = {
+    // req.session.user = {
+    //   email: userExists.email,
+    // };
+
+    //inicio la sesión con jwt
+    console.log("datos del usuario en sesiones", userExists);
+    const tokenUser = {
+      // nombre: userExists.nombre,
+      // apellido: userExists.apellido,
       email: userExists.email,
+      role: userExists.role,
     };
+    console.log(tokenUser);
+    const access_token = generateJWToken(tokenUser); //here´s the error
+    console.log(access_token);
+
+    res.cookie("jwtCookieToken", access_token, {
+      httpOnly: true, // Prevents JavaScript access for security
+      secure: true, // Use only in HTTPS environments
+      maxAge: 2 * 60 * 60 * 1000, // 2 hours
+    });
+    if (email === "admin@gmail.com") {
+      return res.json({
+        status: 201,
+        message: "Admin logueado correctamente",
+        jwt: access_token,
+      });
+    }
 
     return res.json({
       status: 200,
       message: "Usuario logueado correctamente",
+      jwt: access_token,
     });
   } catch (error) {
     return res.json({
@@ -111,7 +140,10 @@ router.put("/resetPassword", async (req, res) => {
       password: createHash(password),
     };
 
-    const result = await userModel.updateOne({ _id: userExists._id}, {$set: user});
+    const result = await userModel.updateOne(
+      { _id: userExists._id },
+      { $set: user }
+    );
 
     res.json({
       status: 200,
@@ -126,40 +158,28 @@ router.put("/resetPassword", async (req, res) => {
   }
 });
 
-router.get("/", (req, res) => {
-  if (req.session.counter) {
-    req.session.counter++;
-    res.send(`Se visitó este sitio ${req.session.counter} veces`);
-  } else {
-    req.session.counter = 1;
-    res.send(`Bienvenido. Se visitó este sitio ${req.session.counter} veces`);
-  }
-});
-
-router.get("/login", (req, res) => {
-  const { username, password } = req.query;
-
-  //creo las propiedades user y admin
-  req.session.user = username;
-  req.session.admin = true;
-  res.status(200).json({
-    message: "Sesión iniciada",
-    username,
-    password,
-  });
-});
-
 router.get("/logout", (req, res) => {
-  req.session.destroy((err) => {
+  try {
+    req.session.destroy((err) => {
     if (err) {
-      res.json({
+      return res.json({
         error: "Error logout",
         message: "Error al cerrar la sesión",
       });
     }
-    res.json({
+     res.clearCookie("jwtCookieToken", {
+       httpOnly: true, // Ensure the cookie isn't accessible via JavaScript
+       secure: true, // This should match how you're setting the cookie
+     });
+     return res.json({
+      status: 200,
       message: "Sesión cerrada correctamente",
     });
   });
+   
+  } catch (error) {
+    console.log(error);
+  }
+
 });
 export default router;

@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 
 const notasSchema = new Schema({
   clase: String,
+  año: Number, 
   id_alumno: { type: Schema.Types.ObjectId },
   notaJulio: Number,
   notaDiciembre: Number

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { notasModel } from "../../models/notas.model.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
+import { authorization, passportCall } from "../utils/utils.js";
+
 
 const router = Router();
 
@@ -42,89 +44,103 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-//Post
-router.post("/", async (req, res) => {
-  try {
-    const nota = req.body;
-    const response = await notasModel.create(nota);
+//Poner notas a un alumno
+router.post(
+  "/",
+  passportCall("jwt"),
+  authorization("admin"),
+  async (req, res) => {
+    try {
+      const nota = req.body;
+      const response = await notasModel.create(nota);
+      const alumno = await alumnosModel.findById(response.id_alumno);
+      alumno.notas.push(response._id);
+      const update = await alumnosModel.findByIdAndUpdate(
+        { _id: alumno._id },
+        alumno
+      );
 
-    const alumno = await alumnosModel.findById(response.id_alumno);
-    alumno.notas.push(response._id);
-    const update = await alumnosModel.findByIdAndUpdate(
-      { _id: alumno._id },
-      alumno
-    );
-
-    res.json({
-      Status: 200,
-      Message: "Nota ingresada correctamente",
-      response,
-    });
-  } catch (error) {
-    return res.json({
-      message: "Error",
-      error,
-    });
+      res.json({
+        Status: 200,
+        Message: "Nota ingresada correctamente",
+        response,
+      });
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
   }
-});
+);
 
-//Put
-router.put("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const nota = notasModel.find({ _id: id })
+//Corregir las notas de un alumno
+router.put(
+  "/:id",
+  passportCall("jwt"),
+  authorization("admin"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const nota = notasModel.find({ _id: id });
 
-    if(!nota){
+      if (!nota) {
         return res.json({
-            Message: 'Nota no encontrada'
-        })
-    }
-    const notaCorregida = req.body;
-    const response = await notasModel.updateOne({
+          Message: "Nota no encontrada",
+        });
+      }
+      const notaCorregida = req.body;
+      const response = await notasModel.updateOne({
         _id: id,
-        notaCorregida
-    })
+        notaCorregida,
+      });
 
-    if(response.modifiedCount == 0){
-         return res.json({
-           message: "No se pudo cambiar la nota",
-         });
+      if (response.modifiedCount == 0) {
+        return res.json({
+          message: "No se pudo cambiar la nota",
+        });
+      }
+
+      return res.json({
+        status: 200,
+        message: `Nota corregida`,
+        response,
+      });
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
     }
-
-    return res.json({
-      status: 200,
-      message: `Nota corregida`,
-      response,
-    });
-  } catch (error) {
-    return res.json({
-      message: "Error",
-      error,
-    });
   }
-});
+);
 
-//Delete
-router.delete("/:id", async (req, res) => {
-  try {
-     const { id } = req.params;
-     const nota = await notasModel.findByIdAndDelete({ _id: id });
+//Borrar una nota
+router.delete(
+  "/:id",
+  passportCall("jwt"),
+  authorization("admin"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const nota = await notasModel.findByIdAndDelete({ _id: id });
 
-     if (!nota) {
-       return res.json({ message: `Nota no encontrada` });
-     }
-     return res.json({
-       status: 200,
-       message: `Nota eliminada`,
-       nota,
-     });
-  } catch (error) {
-    return res.json({
-      message: "Error",
-      error,
-    });
+      if (!nota) {
+        return res.json({ message: `Nota no encontrada` });
+      }
+      return res.json({
+        status: 200,
+        message: `Nota eliminada`,
+        nota,
+      });
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
   }
-});
+);
 
 
 

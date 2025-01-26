@@ -1,10 +1,10 @@
-El alta del alumno se hace por admin
-El alumno puede iniciar sesión sólo si su email está en la db de alumno
-El alumno puede ver su info de contacto pero no modificarla
+El alta del alumno se hace por admin ✓
+El alumno puede iniciar sesión sólo si su email está en la db de alumno ✓
+El alumno puede ver su info de contacto pero no modificarla ✓
 
 Mandar un mail al alumno como comprobante cuando se modifica el casillero de pago
 
-Agregar una vista de admin para armar la lista de alumnos en cada clase
+Agregar una vista de admin para armar la lista de alumnos en cada clase ✓
 Dentro de esta vista, poder agregar una clase desde el selector de clase, agregándole año y profesor
 
 
@@ -30,4 +30,8 @@ Falta en admin:
 => Asistencias múltiples ✓
 => Subir material
 
-=> Inicio de sesión
+Inicio de sesión:
+=> Autorización en todas las vistas (faltan en alumno), ver cómo desautorizar también en las de front, no solo las de back
+=> En todas las vistas atajar el error por autorización inválida
+=> Mail para cambiar contraseña
+=> Mail para confirmar registro y cuando se cambia la contraseña

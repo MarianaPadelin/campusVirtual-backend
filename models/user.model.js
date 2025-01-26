@@ -3,12 +3,12 @@ import { Schema, model } from "mongoose";
 const userSchema = new Schema({
   email: {
     type: String,
-    unique: true
+    unique: true,
   },
   //encriptar
-  password: String
+  password: String,
+  role: { type: String, default: "alumno", enum: ["alumno", "admin"] },
 });
-
 
 const userModel = model("users", userSchema);
 
