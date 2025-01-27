@@ -27,6 +27,8 @@ const MONGO_URL =
   "mongodb+srv://marianapadelin:test@clusterbackend.biiqs0l.mongodb.net/Campus?retryWrites=true&w=majority&appName=ClusterBackend";
 const secret = "campusSeCret";
 
+
+//CORS
 app.use(
   cors({
     credentials: true,
@@ -48,6 +50,8 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
+
+app.options("*", cors());
 
 //Middleware para peticiones por POST y desde body
 app.use(express.json());
