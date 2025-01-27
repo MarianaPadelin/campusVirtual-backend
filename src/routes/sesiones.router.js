@@ -91,7 +91,7 @@ router.post("/login", async (req, res) => {
 
     res.cookie("jwtCookieToken", access_token, {
       httpOnly: true, // Prevents JavaScript access for security
-      // secure: true, // Use only in HTTPS environments
+      secure: true, // Use only in HTTPS environments
       maxAge: 2 * 60 * 60 * 1000, // 2 hours
     });
     if (email === "admin@gmail.com") {
