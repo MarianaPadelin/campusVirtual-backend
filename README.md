@@ -31,6 +31,7 @@ Falta en admin:
 => Subir material
 
 Inicio de sesión:
+=> Ver CORS
 => Autorización en todas las vistas (faltan en alumno), ver cómo desautorizar también en las de front, no solo las de back
 => En todas las vistas atajar el error por autorización inválida
 => Mail para cambiar contraseña

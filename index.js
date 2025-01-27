@@ -32,6 +32,7 @@ app.use(
     credentials: true,
     // origin: "http://localhost:5173",
     origin: "https://campus-virtual-frontend.vercel.app",
+    allowedHeaders: ["Content-Type", "Authorization"],
 
     methods: ["POST", "GET", "PUT", "DELETE"],
   })
