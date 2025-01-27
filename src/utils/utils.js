@@ -70,10 +70,10 @@ export const passportCall = (strategy) => {
   };
 };
 
-export const authorization = (role) => {
+export const authorization = (roles) => {
   return async (req, res, next) => {
     if (!req.user) return res.status(401).send("No existe el usuario");
-    if (req.user.role !== role) {
+    if (!roles.includes(req.user.role)) {
       return res.status(403).send("El usuario no tiene permisos");
     }
     next();

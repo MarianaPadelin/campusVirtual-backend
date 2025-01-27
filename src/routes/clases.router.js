@@ -138,11 +138,25 @@ router.post(
   async (req, res) => {
     try {
       const clase = req.body;
+
+      const year = clase.año;
+      const name = clase.nombre; 
+
+
+      const claseExists = await clasesModel.findOne({ nombre: name, año: year })
+      if(claseExists){
+        console.log("existe")
+        return res.json({
+          status: 500,
+          message: "La clase ya existe en la base de datos"
+        })
+      }
+
       const response = await clasesModel.create(clase);
 
       return res.json({
-        Status: 200,
-        Message: "Clase ingresada correctamente",
+        status: 200,
+        message: "Clase ingresada correctamente",
         response,
       });
     } catch (error) {

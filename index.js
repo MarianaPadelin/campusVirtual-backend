@@ -13,7 +13,7 @@ import pagos_router from "./src/routes/pagos.router.js";
 import asistencias_router from "./src/routes/asistencias.router.js";
 import material_router from "./src/routes/material.router.js";
 import session_router from "./src/routes/sesiones.router.js";
-import alumno_router from "./src/routes/alumno_router.js"
+import user_router from "./src/routes/user.router.js"
 // import __dirname from "./utils.js";
 import session from "express-session";
 import cookieParser from "cookie-parser";
@@ -32,8 +32,8 @@ const secret = "campusSeCret";
 app.use(
   cors({
     credentials: true,
-    // origin: "http://localhost:5173",
-    origin: "https://campus-virtual-frontend.vercel.app",
+    origin: "http://localhost:5173",
+    // origin: "https://campus-virtual-frontend.vercel.app",
     // allowedHeaders: ["Content-Type", "Authorization"],
 
     methods: ["POST", "GET", "PUT", "DELETE"],
@@ -107,6 +107,6 @@ app.use("/asistencias", asistencias_router);
 app.use("/material", material_router);
 
 // alumnos
-app.use("/alumno", alumno_router)
+app.use("/user", user_router)
 
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));

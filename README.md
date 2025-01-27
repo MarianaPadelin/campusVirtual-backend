@@ -31,8 +31,14 @@ Falta en admin:
 => Subir material
 
 Inicio de sesión:
-=> Ver CORS
-=> Autorización en todas las vistas (faltan en alumno), ver cómo desautorizar también en las de front, no solo las de back
-=> En todas las vistas atajar el error por autorización inválida
+=> el setRolUsuario queda atrasado
+=> Ver CORS ✓
+=> Autorización en todas las vistas (faltan en alumno), ver cómo desautorizar también en las de front, no solo las de back ✓
+=> En todas las vistas atajar el error por autorización inválida ✓
 => Mail para cambiar contraseña
 => Mail para confirmar registro y cuando se cambia la contraseña
+
+
+Validaciones :
+
+=> Agregar alumno a la clase: el alumno no puede estar repetido

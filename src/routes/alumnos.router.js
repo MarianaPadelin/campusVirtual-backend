@@ -23,39 +23,39 @@ router.get(
 
 //Encontrar un alumno por id
 
-// router.get(
-//   "/:id",
-//   passportCall("jwt"),
-//   authorization("alumno"),
-//   async (req, res) => {
-//     try {
-//       const { id } = req.params;
+router.get(
+  "/getById/:id",
+  passportCall("jwt"),
+  authorization("admin"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
 
-//       const alumno = await alumnosModel.find({ _id: id }).populate("notas");
-//       if (!alumno) {
-//         return res.json({ message: `Alumno no encontrado` });
-//       }
+      const alumno = await alumnosModel.findOne({ _id: id }).populate("notas");
+      if (!alumno) {
+        return res.json({ message: `Alumno no encontrado` });
+      }
 
-//       return res.json({
-//         status: 200,
-//         message: `Alumno encontrado`,
-//         alumno,
-//       });
-//     } catch (error) {
-//       return res.json({
-//         message: "Error",
-//         error,
-//       });
-//     }
-//   }
-// );
+      return res.json({
+        status: 200,
+        message: `Alumno encontrado`,
+        alumno,
+      });
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
+  }
+);
 
 //Encontrar un alumno por email
 
 router.get(
   "/:email",
   passportCall("jwt"),
-  authorization("alumno"),
+  authorization(["admin" , "alumno"]),
   async (req, res) => {
     try {
       const { email } = req.params;

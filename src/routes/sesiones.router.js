@@ -85,9 +85,9 @@ router.post("/login", async (req, res) => {
       email: userExists.email,
       role: userExists.role,
     };
-    console.log(tokenUser);
+    // console.log(tokenUser);
     const access_token = generateJWToken(tokenUser); //here´s the error
-    console.log(access_token);
+    // console.log(access_token);
 
     res.cookie("jwtCookieToken", access_token, {
       httpOnly: true, // Prevents JavaScript access for security
@@ -99,6 +99,7 @@ router.post("/login", async (req, res) => {
     if (email === "admin@gmail.com") {
       return res.json({
         status: 201,
+        tokenUser,
         message: "Admin logueado correctamente",
         jwt: access_token,
       });
@@ -106,6 +107,7 @@ router.post("/login", async (req, res) => {
 
     return res.json({
       status: 200,
+      tokenUser,
       message: "Usuario logueado correctamente",
       jwt: access_token,
     });

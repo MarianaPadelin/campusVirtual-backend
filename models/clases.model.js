@@ -4,6 +4,7 @@ const clasesSchema = new Schema({
   nombre: String, 
   profesor: String,
   año: Number,
+  faltas: Number, 
   alumnos:[
      {
       type: Schema.Types.ObjectId,

@@ -28,6 +28,33 @@ router.get("/", async (req, res) => {
   }
 });
 
+//Get pago by id, el alumno puede ver qué pagos hizo
+
+router.get(
+  "/:id",
+  passportCall("jwt"),
+  authorization("alumno"),
+  async (req, res) => {
+    try {
+      const { id } = req.params; 
+
+      const pagos = await pagosModel.find({ id_alumno: id})
+      return res.json({
+        status: 200,
+        message: "Pagos encontrados",
+        pagos
+      })
+
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
+
+
+  }
+);
 
 //Cargar pagos
 router.post(
