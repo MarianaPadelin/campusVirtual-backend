@@ -33,8 +33,7 @@ app.use(
   cors({
     credentials: true,
     // origin: "http://localhost:5173",
-    origin: "*",
-    // origin: "https://campus-virtual-frontend.vercel.app",
+    origin: "https://campus-virtual-frontend.vercel.app",
     // allowedHeaders: ["Content-Type", "Authorization"],
 
     methods: ["POST", "GET", "PUT", "DELETE"],
