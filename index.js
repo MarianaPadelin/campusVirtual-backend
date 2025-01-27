@@ -41,7 +41,7 @@ app.use(
 );
 
 
-app.options("*", cors());
+// app.options("*", cors());
 
 //Middleware para peticiones por POST y desde body
 app.use(express.json());
