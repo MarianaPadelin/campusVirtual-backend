@@ -1,3 +1,5 @@
+import config from "./src/config/config.js";
+
 import express from "express";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
@@ -13,8 +15,10 @@ import pagos_router from "./src/routes/pagos.router.js";
 import asistencias_router from "./src/routes/asistencias.router.js";
 import material_router from "./src/routes/material.router.js";
 import session_router from "./src/routes/sesiones.router.js";
-import user_router from "./src/routes/user.router.js"
+import user_router from "./src/routes/user.router.js";
+import email_router from "./src/routes/email.router.js";
 // import __dirname from "./utils.js";
+
 import session from "express-session";
 import cookieParser from "cookie-parser";
 
@@ -22,24 +26,21 @@ import cors from "cors";
 
 //Inicializo el servidor en express
 const app = express();
-const PORT = 3000;
-const MONGO_URL =
-  "mongodb+srv://marianapadelin:test@clusterbackend.biiqs0l.mongodb.net/Campus?retryWrites=true&w=majority&appName=ClusterBackend";
+const PORT = config.port;
+const MONGO_URL = config.mongoUrl
 const secret = "campusSeCret";
-
 
 //CORS
 app.use(
   cors({
     credentials: true,
-    // origin: "http://localhost:5173",
-    origin: "https://campus-virtual-frontend.vercel.app",
+    origin: config.rootUrl,
+    // origin: "https://campus-virtual-frontend.vercel.app",
     // allowedHeaders: ["Content-Type", "Authorization"],
 
     methods: ["POST", "GET", "PUT", "DELETE"],
   })
 );
-
 
 // app.options("*", cors());
 
@@ -95,6 +96,10 @@ app.use(passport.initialize()); // Attach Passport middleware
 app.use(cookieParser());
 
 app.use(express.static("/public"));
+
+//Nodemailer
+app.use("/email", email_router);
+
 //Conexión con las rutas
 
 app.use("/session", session_router);
@@ -106,7 +111,7 @@ app.use("/pagos", pagos_router);
 app.use("/asistencias", asistencias_router);
 app.use("/material", material_router);
 
-// alumnos
-app.use("/user", user_router)
+// agarrar datos de usuario para cuando se recarga la página
+app.use("/user", user_router);
 
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));

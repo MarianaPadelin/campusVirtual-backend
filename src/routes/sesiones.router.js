@@ -6,6 +6,7 @@ import {
   generateJWToken,
   isValidPassword,
 } from "../utils/utils.js";
+import config from "../config/config.js";
 
 //usuario o contraseña incorrectos = 401
 //usuario no autorizado = 403
@@ -80,8 +81,6 @@ router.post("/login", async (req, res) => {
     //inicio la sesión con jwt
     console.log("datos del usuario en sesiones", userExists);
     const tokenUser = {
-      // nombre: userExists.nombre,
-      // apellido: userExists.apellido,
       email: userExists.email,
       role: userExists.role,
     };
@@ -123,7 +122,7 @@ router.post("/login", async (req, res) => {
 router.put("/resetPassword", async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    const { token } = req.params
     const userExists = await userModel.findOne({ email });
     if (!userExists) {
       return res.json({
@@ -132,7 +131,7 @@ router.put("/resetPassword", async (req, res) => {
       });
     }
     const esAlumno = await alumnosModel.findOne({ email });
-    if (!esAlumno) {
+    if (!esAlumno && email !== config.adminMail) {
       return res.json({
         status: 500,
         message: "Este email no está registrado como un alumno de la escuela",

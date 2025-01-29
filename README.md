@@ -31,14 +31,24 @@ Falta en admin:
 => Subir material
 
 Inicio de sesión:
-=> el setRolUsuario queda atrasado
+=> si no carga en 5 segundos mandarlo al login
+=> el setRolUsuario queda atrasado ✓
 => Ver CORS ✓
 => Autorización en todas las vistas (faltan en alumno), ver cómo desautorizar también en las de front, no solo las de back ✓
 => En todas las vistas atajar el error por autorización inválida ✓
 => Mail para cambiar contraseña
 => Mail para confirmar registro y cuando se cambia la contraseña
-
+=> Loader en login ✓
+=> poner logout como función y no como componente ✓ 
 
 Validaciones :
-
+=> agregar , { withCredentials: true } a las rutas de front
 => Agregar alumno a la clase: el alumno no puede estar repetido
+
+Errores: 
+=> Se ve el loader cuando voy a cambiar contraseña (permisos en app)
+=> Cuando cambio la contraseña no puede ser la misma que antes?
+=> poner mail dinamico en registrar usuario
+=> permitir que el admin pueda cambiar la contraseña sin estar registrado como alumno ✓
+=> Asegurarse de que se vea un forbidden o mandar a login si no tiene los permisos (sin login)
+=> Ver mensaje de "admin conectado" ✓
