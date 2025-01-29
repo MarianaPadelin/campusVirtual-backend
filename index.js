@@ -30,6 +30,8 @@ const PORT = config.port;
 const MONGO_URL = config.mongoUrl
 const secret = "campusSeCret";
 
+
+
 //CORS
 app.use(
   cors({
