@@ -120,13 +120,13 @@ router.post(
       const alumno = req.body;
       const response = await alumnosModel.create(alumno);
       return res.json({
-        Status: 200,
-        Message: "Alumno ingresado correctamente",
+        status: 200,
+        message: "Alumno ingresado correctamente",
         response,
       });
     } catch (error) {
       return res.json({
-        message: "Error",
+        message: "Error" ,
         error,
       });
     }
