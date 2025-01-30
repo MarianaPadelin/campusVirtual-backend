@@ -37,14 +37,12 @@ app.use(
   cors({
     credentials: true,
     origin: config.rootUrl,
-    // origin: "https://campus-virtual-frontend.vercel.app",
     // allowedHeaders: ["Content-Type", "Authorization"],
 
     methods: ["POST", "GET", "PUT", "DELETE"],
   })
 );
 
-// app.options("*", cors());
 
 //Middleware para peticiones por POST y desde body
 app.use(express.json());
