@@ -8,6 +8,7 @@ import {
 } from "../utils/utils.js";
 import config from "../config/config.js";
 import { sendEmail } from "./email.router.js";
+import { authorization, passportCall } from "../utils/utils.js";
 
 //usuario o contraseña incorrectos = 401
 //usuario no autorizado = 403
@@ -40,7 +41,7 @@ router.post("/register", async (req, res) => {
     };
 
     const result = await userModel.create(user);
-    sendEmail(email)
+    sendEmail(email);
     res.json({
       status: 200,
       message: "Usuario creado correctamente",
@@ -123,7 +124,7 @@ router.post("/login", async (req, res) => {
 router.put("/resetPassword", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const { token } = req.params
+    const { token } = req.params;
     const userExists = await userModel.findOne({ email });
     if (!userExists) {
       return res.json({
@@ -162,28 +163,58 @@ router.put("/resetPassword", async (req, res) => {
   }
 });
 
+router.delete(
+  "/:email",
+  passportCall("jwt"),
+  authorization("admin"),
+  async (req, res) => {
+    try {
+      const { email } = req.params;
+      const userExists = await userModel.findOne({ email });
+      console.log(userExists);
+      if (!userExists) {
+        return res.json({
+          status: 404,
+          message: "No se encontró al usuario",
+        });
+      }
+
+      await userModel.deleteOne(userExists)
+      return res.json({
+        status: 200,
+        message: "Usuario eliminado",
+        userExists,
+      });
+    } catch (error) {
+      return res.json({
+        status: 500,
+        message: "Error deleting email",
+        error,
+      });
+    }
+  }
+);
+
 router.get("/logout", (req, res) => {
   try {
     req.session.destroy((err) => {
-    if (err) {
-      return res.json({
-        error: "Error logout",
-        message: "Error al cerrar la sesión",
+      if (err) {
+        return res.json({
+          error: "Error logout",
+          message: "Error al cerrar la sesión",
+        });
+      }
+      res.clearCookie("jwtCookieToken", {
+        httpOnly: true, // Ensure the cookie isn't accessible via JavaScript
+        secure: true, // This should match how you're setting the cookie
       });
-    }
-     res.clearCookie("jwtCookieToken", {
-       httpOnly: true, // Ensure the cookie isn't accessible via JavaScript
-       secure: true, // This should match how you're setting the cookie
-     });
-     return res.json({
-      status: 200,
-      message: "Sesión cerrada correctamente",
+      return res.json({
+        status: 200,
+        message: "Sesión cerrada correctamente",
+      });
     });
-  });
-   
   } catch (error) {
     console.log(error);
   }
-
 });
 export default router;

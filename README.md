@@ -46,6 +46,8 @@ Validaciones :
 => Agregar alumno a la clase: el alumno no puede estar repetido
 
 Errores: 
+=> No borra al usuario cuando borro al alumno de la base de datos ✓
+=> Cuando se registra un alumno no aparece automaticamente en la lista ✓
 => Si no tiene sesión iniciada queda en loader, poner un timer de 10 segundos y volver al inicio ✓
 => en cambiar contraseña puedo poner cualquier mail y lo toma como correcto
 => Se ve el loader cuando voy a cambiar contraseña (permisos en app) ✓
