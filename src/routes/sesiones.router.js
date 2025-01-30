@@ -7,6 +7,7 @@ import {
   isValidPassword,
 } from "../utils/utils.js";
 import config from "../config/config.js";
+import { sendEmail } from "./email.router.js";
 
 //usuario o contraseña incorrectos = 401
 //usuario no autorizado = 403
@@ -39,7 +40,7 @@ router.post("/register", async (req, res) => {
     };
 
     const result = await userModel.create(user);
-
+    sendEmail(email)
     res.json({
       status: 200,
       message: "Usuario creado correctamente",

@@ -5,9 +5,7 @@ import { userModel } from "../../models/user.model.js";
 import { v4 } from "uuid";
 
 const router = Router();
-// const senderEmail = "marianapadelin@gmail.com";
 const recieverEmail = "marianapadelin@gmail.com";
-// const gmailPass = "byymzsusznjymcod";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -37,32 +35,59 @@ const mailOptions = {
     </div>`,
 };
 
-router.get("/", (req, res) => {
+// // router.get("/", (req, res) => {
+//   export const sendMail = (req, res) =>{
+//     const
+//   try {
+//     transporter.sendMail(mailOptions, (error, info) => {
+//       if (error) {
+//         console.error(error);
+//         res.json({
+//           status: 400,
+//           message: "Error enviando el mensaje",
+//           payload: error,
+//         });
+//       }
+//       console.log("Mensaje enviado", info.messageId);
+//       res.json({
+//         message: "Envío correcto",
+//         payload: info,
+//       });
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.json({
+//       status: 500,
+//       message: "No se pudo enviar el mail",
+//       error,
+//     });
+//   }
+// };
+
+export const sendEmail = async (email) => {
   try {
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error(error);
-        res.json({
-          status: 400,
-          message: "Error enviando el mensaje",
-          payload: error,
-        });
-      }
-      console.log("Mensaje enviado", info.messageId);
-      res.json({
-        message: "Envío correcto",
-        payload: info,
-      });
+    // const data = await ticketService.getById(id);
+    // const { _id, products, amount, purchaser, purchase_datetime } = data;
+    // let productsString = JSON.stringify(products);
+    // logger.info(data);
+
+    let result = transporter.sendMail({
+      from: "Campus virtual circo de las artes - " + config.emailAcount,
+      to: email,
+      subject: "Registro exitoso",
+      html: `<div>
+      <p>El correo se registró correctamente en el campus virtual
+      </div>`,
     });
+
+    console.log(`Email enviado a: ${email}`);
+
+    return result;
   } catch (error) {
-    console.log(error);
-    res.json({
-      status: 500,
-      message: "No se pudo enviar el mail",
-      error,
-    });
+    console.error(error);
+    return error;
   }
-});
+};
 
 //Reset de contraseña:
 
@@ -134,7 +159,6 @@ router.get("/reset/:token", (req, res) => {
     console.error("El link expiró");
     return res.redirect(`${config.rootUrl}/sendEmail`);
   }
-  console.log("exito");
   return res.redirect(`${config.rootUrl}/resetPassword/${[token]}`);
 });
 

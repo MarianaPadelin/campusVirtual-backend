@@ -46,9 +46,11 @@ Validaciones :
 => Agregar alumno a la clase: el alumno no puede estar repetido
 
 Errores: 
-=> Se ve el loader cuando voy a cambiar contraseña (permisos en app)
-=> Cuando cambio la contraseña no puede ser la misma que antes?
-=> poner mail dinamico en registrar usuario
+=> Si no tiene sesión iniciada queda en loader, poner un timer de 10 segundos y volver al inicio ✓
+=> en cambiar contraseña puedo poner cualquier mail y lo toma como correcto
+=> Se ve el loader cuando voy a cambiar contraseña (permisos en app) ✓
+=> poner mail dinamico en registrar usuario ✓
+=> Poner loaders en iniciar sesión, registrarse, enviar mail, reset pass ✓
 => permitir que el admin pueda cambiar la contraseña sin estar registrado como alumno ✓
-=> Asegurarse de que se vea un forbidden o mandar a login si no tiene los permisos (sin login)
+=> Asegurarse de que se vea un forbidden o mandar a login si no tiene los permisos (sin login) ✓
 => Ver mensaje de "admin conectado" ✓
