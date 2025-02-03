@@ -46,6 +46,9 @@ Validaciones :
 => Agregar alumno a la clase: el alumno no puede estar repetido
 
 Etapa 4 - integración:
+=> poner timer en los Swal
+=> Si un alumno no está registrado me aparece "usuario y contraseña incorrectos"
+=> si quiero agregar alumnos de una clase no registrada me aparece "error desconocido" 
 => Enviar un mail cuando se actualicen las notas del alumno?
 => Sección "ver perfil" en el alumno para editar sus datos 
 => Ver asistencias alumno

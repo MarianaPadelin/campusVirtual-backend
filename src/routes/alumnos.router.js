@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { alumnosModel } from "../../models/alumnos.model.js";
 import { authorization, passportCall } from "../utils/utils.js";
+import { clasesModel } from "../../models/clases.model.js";
 
 const router = Router();
 
@@ -55,7 +56,7 @@ router.get(
 router.get(
   "/:email",
   passportCall("jwt"),
-  authorization(["admin" , "alumno"]),
+  authorization(["admin", "alumno"]),
   async (req, res) => {
     try {
       const { email } = req.params;
@@ -97,8 +98,73 @@ router.get(
       const result = alumno.notas.filter((nota) => nota.año == year);
 
       return res.json({
-        status: 200, 
+        status: 200,
         result,
+      });
+    } catch (error) {
+      return res.json({
+        status: 500,
+        message: "Error",
+        error,
+      });
+    }
+  }
+);
+
+//Ver las asistencias de un alumno, agrupadas por clase
+router.get(
+  "/:id/asistencias/:year",
+  passportCall("jwt"),
+  authorization("alumno"),
+  async (req, res) => {
+    try {
+      const { id, year } = req.params;
+      const alumno = await alumnosModel
+        .findOne({ _id: id })
+        .populate("asistencias");
+      if (!alumno) {
+        return res.json({ status: 404, message: `Alumno no encontrado` });
+      }
+      //array de asistencias del alumno con su id, clase y fecha
+      const asistenciasPorAnio = alumno.asistencias.filter((a) =>
+        a.fecha.includes(year)
+      );
+
+      const clases = await clasesModel.find();
+
+      // Group asistencias by class and count total absences
+      const asistenciasPorClase = asistenciasPorAnio.reduce(
+        (acc, asistencia) => {
+          const { clase, asistencia: falto } = asistencia;
+
+          if (!acc[clase]) {
+            const claseData = clases.find((c) => c.nombre === clase);
+            acc[clase] = {
+              totalFaltas: 0,
+              faltasDisponibles: claseData ? claseData.faltas : 0,
+            };
+          }
+
+          if (falto) {
+            acc[clase].totalFaltas += 1;
+          }
+
+          return acc;
+        },
+        {}
+      );
+
+      //Devuelve un array
+      const asistenciasPorClaseArray = Object.entries(asistenciasPorClase).map(
+        ([clase, data]) => ({
+          clase,
+          totalFaltas: data.totalFaltas,
+          faltasDisponibles: data.faltasDisponibles,
+        })
+      );
+      return res.json({
+        status: 200,
+        asistenciasPorClase: asistenciasPorClaseArray,
       });
     } catch (error) {
       return res.json({
@@ -126,7 +192,7 @@ router.post(
       });
     } catch (error) {
       return res.json({
-        message: "Error" ,
+        message: "Error",
         error,
       });
     }

@@ -24,9 +24,9 @@ router.post(
         alumno.asistencias.push(response._id);
         await alumnosModel.findByIdAndUpdate({ _id: alumno._id }, alumno);
 //agarrar la clase, dentro de la clase al alumno, y a faltas disponibles restarle 1
-        const claseTarget = await clasesModel.find({ nombre: asistencia.clase})
-        console.log(claseTarget)
-        responses.push(response);
+        // const claseTarget = await clasesModel.find({ nombre: asistencia.clase})
+        // console.log(claseTarget)
+        // responses.push(response);
       }
 
       res.json({
