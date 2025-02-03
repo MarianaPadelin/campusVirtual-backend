@@ -206,7 +206,8 @@ router.get("/logout", (req, res) => {
       }
       res.clearCookie("jwtCookieToken", {
         httpOnly: true, // Ensure the cookie isn't accessible via JavaScript
-        secure: true, // This should match how you're setting the cookie
+        secure: true,
+        sameSite: "None", // This should match how you're setting the cookie
       });
       return res.json({
         status: 200,
