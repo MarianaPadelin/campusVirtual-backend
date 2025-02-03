@@ -45,6 +45,14 @@ Validaciones :
 => agregar , { withCredentials: true } a las rutas de front
 => Agregar alumno a la clase: el alumno no puede estar repetido
 
+Etapa 4 - integración:
+=> Enviar un mail cuando se actualicen las notas del alumno?
+=> Sección "ver perfil" en el alumno para editar sus datos 
+=> Ver asistencias alumno
+=> Subir tp alumno
+=> Subir material admin
+=> Ver material alumno
+
 Errores: 
 => No borra al usuario cuando borro al alumno de la base de datos ✓
 => Cuando se registra un alumno no aparece automaticamente en la lista ✓
@@ -56,3 +64,5 @@ Errores:
 => permitir que el admin pueda cambiar la contraseña sin estar registrado como alumno ✓
 => Asegurarse de que se vea un forbidden o mandar a login si no tiene los permisos (sin login) ✓
 => Ver mensaje de "admin conectado" ✓
+=> Sacar la casita ✓
+=> Se traba al registrarse si se edita el mail

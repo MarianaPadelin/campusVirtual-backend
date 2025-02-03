@@ -92,8 +92,8 @@ export const sendEmail = async (email) => {
 //Reset de contraseña:
 
 const mailOptionsToReset = {
-  from: config.emailAcount,
-  subject: "Reset password",
+  from: "Campus virtual circo de las artes - " + config.emailAcount,
+  subject: "Restaurar contraseña",
 };
 
 const tempDbMails = {};
@@ -126,7 +126,7 @@ router.post("/", async (req, res) => {
     console.log(tempDbMails);
 
     mailOptionsToReset.to = email;
-    mailOptionsToReset.html = `Para restaurar tu contraseña seguir este enlace: <a href="${link}"> Reset Password</a>`;
+    mailOptionsToReset.html = `Para restaurar tu contraseña seguir este enlace: <a href="${link}"> Restaurar Contraseña </a>`;
 
     transporter.sendMail(mailOptionsToReset, (error, info) => {
       if (error) {
