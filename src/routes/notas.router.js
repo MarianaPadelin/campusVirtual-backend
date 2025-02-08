@@ -61,8 +61,8 @@ router.post(
       );
 
       res.json({
-        Status: 200,
-        Message: "Nota ingresada correctamente",
+        status: 200,
+        message: "Nota ingresada correctamente",
         response,
       });
     } catch (error) {

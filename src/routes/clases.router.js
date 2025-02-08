@@ -12,7 +12,7 @@ const router = Router();
 router.get(
   "/",
   passportCall("jwt"),
-  authorization("admin"),
+  authorization(["admin", "alumno"]),
   async (req, res) => {
     try {
       const clases = await clasesModel.find().distinct("nombre");
@@ -68,27 +68,27 @@ router.get(
   }
 );
 
-//añadir la lista de alumno a una clase
+//añadir alumno a una clase
 
-router.get(
-  "/add/:nombreClase/:year",
+router.post(
+  "/add",
   passportCall("jwt"),
   authorization("admin"),
   async (req, res) => {
     try {
-      const { nombreClase, year } = req.params;
-
+      const { nombreClase, año, nombre, apellido } = req.body;
+      console.log(nombreClase, año, nombre, apellido)
       const clase = await clasesModel
-        .findOne({ nombre: nombreClase, año: year })
+        .findOne({ nombre: nombreClase, año: año })
         .populate("alumnos");
 
       if (!clase) {
         return res.json({ message: "Clase no encontrada" });
       }
 
-      const apellidoAlumno = req.query.apellido;
       const alumno = await alumnosModel.findOne({
-        apellido: apellidoAlumno,
+        nombre: nombre,
+        apellido: apellido,
       });
 
       if (!alumno) {
@@ -115,6 +115,9 @@ router.get(
         clase
       );
 
+
+      //además, setear las faltas en 0
+      
       return res.json({
         status: 200,
         Message: "Lista generada correctamente",

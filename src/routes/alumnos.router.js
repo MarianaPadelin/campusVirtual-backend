@@ -125,41 +125,42 @@ router.get(
       if (!alumno) {
         return res.json({ status: 404, message: `Alumno no encontrado` });
       }
+      //encontrar las clases en las que participa el alumno
+      const clasesQueToma = await clasesModel.find({ alumnos: id });
+
       //array de asistencias del alumno con su id, clase y fecha
       const asistenciasPorAnio = alumno.asistencias.filter((a) =>
         a.fecha.includes(year)
       );
 
-      const clases = await clasesModel.find();
+      const asistenciasPorClase = {};
+      clasesQueToma.forEach((clase) => {
+        asistenciasPorClase[clase.nombre] = {
+          ausentes: 0, // Start with 0 absences
+          totalFaltas: clase.faltas, // Get the total allowed absences from class
+        };
+      });
 
-      // Group asistencias by class and count total absences
-      const asistenciasPorClase = asistenciasPorAnio.reduce(
-        (acc, asistencia) => {
-          const { clase, asistencia: falto } = asistencia;
+    
+      if(asistenciasPorAnio.length === 0){   //si no hay asistencias en ese año
+          return res.json({
+            status: 200,
+            asistenciasPorClase: [],
+          });
+      }
+      asistenciasPorAnio.forEach(({ clase, asistencia: ausente }) => { //asistencia: true es ausente
+        if (ausente) {
+          asistenciasPorClase[clase].ausentes += 1; // Count absences
+        }
+      });
 
-          if (!acc[clase]) {
-            const claseData = clases.find((c) => c.nombre === clase);
-            acc[clase] = {
-              totalFaltas: 0,
-              faltasDisponibles: claseData ? claseData.faltas : 0,
-            };
-          }
-
-          if (falto) {
-            acc[clase].totalFaltas += 1;
-          }
-
-          return acc;
-        },
-        {}
-      );
-
+    
       //Devuelve un array
       const asistenciasPorClaseArray = Object.entries(asistenciasPorClase).map(
         ([clase, data]) => ({
           clase,
+          ausentes: data.ausentes,
           totalFaltas: data.totalFaltas,
-          faltasDisponibles: data.faltasDisponibles,
         })
       );
       return res.json({

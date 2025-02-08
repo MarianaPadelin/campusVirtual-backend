@@ -1,12 +1,12 @@
 import { Schema, model } from "mongoose";
 
 const clasesSchema = new Schema({
-  nombre: String, 
+  nombre: String,
   profesor: String,
   año: Number,
-  faltas: Number, 
-  alumnos:[
-     {
+  faltas: Number,
+  alumnos: [
+    {
       type: Schema.Types.ObjectId,
       ref: "alumnos",
     },
@@ -24,6 +24,12 @@ const clasesSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "notas",
       // id: false
+    },
+  ],
+  archivos: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "material",
     },
   ],
 });

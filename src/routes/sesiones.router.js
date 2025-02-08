@@ -62,11 +62,10 @@ router.post("/login", async (req, res) => {
 
     //validación: El email tiene que estar en la db de alumnos pero no en la de usuarios
     const userExists = await userModel.findOne({ email });
-
     if (!userExists) {
       return res.json({
-        status: 401,
-        message: "El usuario no existe",
+        status: 400,
+        message: "El usuario no está registrado",
       });
     } else if (!isValidPassword(userExists, password)) {
       return res.json({

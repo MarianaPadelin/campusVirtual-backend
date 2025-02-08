@@ -66,21 +66,43 @@ const mailOptions = {
 
 export const sendEmail = async (email) => {
   try {
-    // const data = await ticketService.getById(id);
-    // const { _id, products, amount, purchaser, purchase_datetime } = data;
-    // let productsString = JSON.stringify(products);
-    // logger.info(data);
-
     let result = transporter.sendMail({
       from: "Campus virtual circo de las artes - " + config.emailAcount,
       to: email,
       subject: "Registro exitoso",
       html: `<div>
-      <p>El correo se registró correctamente en el campus virtual
+      <p>El correo se registró correctamente en el campus virtual</p>
       </div>`,
     });
 
     console.log(`Email enviado a: ${email}`);
+
+    return result;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};
+
+//mandar comprobante
+export const sendComprobante = async (email, fecha, importe) => {
+  try {
+    let result = transporter.sendMail({
+      from: "Campus virtual circo de las artes - " + config.emailAcount,
+      to: email,
+      subject: "Comprobante de pago",
+      html: `<div>
+      <h1>Comprobante de pago - Circo de las artes</h1>
+      <p>Se registró el siguiente pago: 
+      <ul>
+      <li>Importe: ${importe}</li>
+      <li>Fecha: ${fecha}</li>
+      </ul>
+      </p>
+      </div>`,
+    });
+
+    console.log(`Email enviado a: ${email}, importe: $ ${importe}, fecha: ${fecha}`);
 
     return result;
   } catch (error) {

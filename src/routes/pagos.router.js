@@ -2,6 +2,7 @@ import { Router } from "express";
 import { pagosModel } from "../../models/pagos.model.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
 import { authorization, passportCall } from "../utils/utils.js";
+import { sendComprobante } from "./email.router.js";
 
 const router = Router();
 
@@ -64,15 +65,19 @@ router.post(
   async (req, res) => {
     try {
       const pago = req.body;
-
+      const  { id_alumno, fecha, monto } = pago;
       const response = await pagosModel.create(pago);
 
-      const alumno = await alumnosModel.findById(response.id_alumno);
+      const alumno = await alumnosModel.findById(id_alumno);
       alumno.pagos.push(response._id);
       const update = await alumnosModel.findByIdAndUpdate(
         { _id: alumno._id },
         alumno
       );
+      const email = alumno.email;
+
+      //envío email con comprobante
+      sendComprobante(email, fecha, monto)
       res.json({
         status: 200,
         Message: "Pago ingresado correctamente",
