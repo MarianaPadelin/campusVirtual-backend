@@ -3,6 +3,7 @@ import { loader } from "../utils/loader.js";
 import { authorization, passportCall } from "../utils/utils.js";
 import { clasesModel } from "../../models/clases.model.js";
 import { materialModel } from "../../models/material.model.js";
+import { alumnosModel } from "../../models/alumnos.model.js";
 
 const router = Router();
 
@@ -19,7 +20,7 @@ router.get(
       const clase = await clasesModel
         .findOne({ nombre: nombreClase, año: year })
         .populate("archivos")
-        .sort({ fecha: -1})
+        .sort({ fecha: -1 });
 
       if (!clase) {
         return res.json({
@@ -127,7 +128,12 @@ router.delete(
       const { id } = req.params;
 
       const archivo = await materialModel.findByIdAndDelete(id);
-
+      if (!archivo) {
+        return res.json({
+          status: 404,
+          message: "No se encontró el archivo",
+        });
+      }
       return res.json({
         status: 200,
         message: "Archivo eliminado",

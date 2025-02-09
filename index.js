@@ -17,6 +17,7 @@ import material_router from "./src/routes/material.router.js";
 import session_router from "./src/routes/sesiones.router.js";
 import user_router from "./src/routes/user.router.js";
 import email_router from "./src/routes/email.router.js";
+import tp_router from "./src/routes/tp.router.js"
 // import __dirname from "./utils.js";
 
 import session from "express-session";
@@ -110,6 +111,7 @@ app.use("/notas", notas_router);
 app.use("/pagos", pagos_router);
 app.use("/asistencias", asistencias_router);
 app.use("/material", material_router);
+app.use("/tp", tp_router)
 
 // agarrar datos de usuario para cuando se recarga la página
 app.use("/user", user_router);

@@ -30,17 +30,15 @@ const alumnosSchema = new Schema({
       // id: false
     },
   ],
+  tps: [],
 });
-
 
 //Populate de las notas con un middleware
 // alumnosSchema.pre('find', function() {
 //     this.populate('notas');
 // })
 
-
-
-//Instancio el modelo para conectarlo a la db. 
+//Instancio el modelo para conectarlo a la db.
 // El primer parámetro es el nombre de la colección dentro de la db y el segundo es el esquema.
 const alumnosModel = model("alumnos", alumnosSchema);
 

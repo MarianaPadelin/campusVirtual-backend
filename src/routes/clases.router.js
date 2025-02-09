@@ -3,16 +3,14 @@ import { clasesModel } from "../../models/clases.model.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
 import { authorization, passportCall } from "../utils/utils.js";
 
-
 //ver el SORT por apellido
 const router = Router();
-
 
 //Muestra una lista con todas las clases
 router.get(
   "/",
   passportCall("jwt"),
-  authorization(["admin", "alumno"]),
+  authorization("admin"),
   async (req, res) => {
     try {
       const clases = await clasesModel.find().distinct("nombre");
@@ -26,9 +24,47 @@ router.get(
   }
 );
 
+//Ver las clases en las que está instripto ese alumno en ese año
+router.get(
+  "/alumno/:idAlumno/:year",
+  passportCall("jwt"),
+  authorization("alumno"),
+  async (req, res) => {
+    try {
+      const { idAlumno, year } = req.params;
+
+      const clases = await clasesModel.find({ alumnos: idAlumno, año: year })
+
+      if(!clases){
+        return res.json({
+          status: 404,
+          message: "No se encontraron clases para este año"
+        })
+      }
+
+      const nombreClases = [];
+
+      clases.map((clase) => (
+        nombreClases.push(clase.nombre)
+      ))
+
+      console.log(nombreClases)
+      return res.json({
+        status: 200,
+        nombreClases
+      })
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
+  }
+);
+
 //muestra todos los alumnos de la clase seleccionada
 router.get(
-  "/:nombreClase/:year",
+  "/admin/:nombreClase/:year",
   passportCall("jwt"),
   authorization("admin"),
   async (req, res) => {
@@ -77,7 +113,7 @@ router.post(
   async (req, res) => {
     try {
       const { nombreClase, año, nombre, apellido } = req.body;
-      console.log(nombreClase, año, nombre, apellido)
+      console.log(nombreClase, año, nombre, apellido);
       const clase = await clasesModel
         .findOne({ nombre: nombreClase, año: año })
         .populate("alumnos");
@@ -115,9 +151,8 @@ router.post(
         clase
       );
 
-
       //además, setear las faltas en 0
-      
+
       return res.json({
         status: 200,
         Message: "Lista generada correctamente",
@@ -132,7 +167,6 @@ router.post(
   }
 );
 
-
 //Agregar una nueva clase
 router.post(
   "/",
@@ -143,16 +177,18 @@ router.post(
       const clase = req.body;
 
       const year = clase.año;
-      const name = clase.nombre; 
+      const name = clase.nombre;
 
-
-      const claseExists = await clasesModel.findOne({ nombre: name, año: year })
-      if(claseExists){
-        console.log("existe")
+      const claseExists = await clasesModel.findOne({
+        nombre: name,
+        año: year,
+      });
+      if (claseExists) {
+        console.log("existe");
         return res.json({
           status: 500,
-          message: "La clase ya existe en la base de datos"
-        })
+          message: "La clase ya existe en la base de datos",
+        });
       }
 
       const response = await clasesModel.create(clase);
@@ -170,7 +206,6 @@ router.post(
     }
   }
 );
-
 
 // Eliminar a un alumno de una clase
 router.delete(

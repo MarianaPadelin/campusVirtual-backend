@@ -39,8 +39,10 @@ Subir archivos:
 => alinear la tabla ✓
 => validar que si el nombre es el mismo diga que está repetido y no lo suba ✓
 => ordenar por fecha decreciente
-=> ver permisos para que el alumno solo lo pueda ver si está anotado en esa clase
-
+=> ver permisos para que el alumno solo lo pueda ver si está anotado en esa clase ✓
+=> mail de verificación cuando se subió el tp con los datos de subida (originalname, clase, fecha)
+=> borrar tps (alumno)
+=> el tp no se borra del array del alumno cuando elimino el archivo
 
 
 Inicio de sesión:
@@ -84,3 +86,4 @@ Errores:
 => Ver mensaje de "admin conectado" ✓
 => Sacar la casita ✓
 => Se traba al registrarse si se edita el mail
+=> Error de autorización para ver los alumnos anotados en una clase (admin)
