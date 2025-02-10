@@ -30,7 +30,13 @@ const alumnosSchema = new Schema({
       // id: false
     },
   ],
-  tps: [],
+  tps: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "tps",
+      // id: false
+    },
+  ],
 });
 
 //Populate de las notas con un middleware

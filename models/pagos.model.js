@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 const pagosSchema = new Schema({
-  id_alumno: { type: Schema.Types.ObjectId },
+  id_alumno: { type: Schema.Types.ObjectId, ref: "alumnos" },
   fecha: String,
   monto: Number
 });

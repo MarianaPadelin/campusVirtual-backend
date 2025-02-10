@@ -31,8 +31,7 @@ router.get(
   async (req, res) => {
     try {
       const { id } = req.params;
-
-      const alumno = await alumnosModel.findOne({ _id: id }).populate("notas");
+      const alumno = await alumnosModel.findOne({ _id: id }).populate("notas").populate("pagos");
       if (!alumno) {
         return res.json({ message: `Alumno no encontrado` });
       }
@@ -54,7 +53,7 @@ router.get(
 //Encontrar un alumno por email
 
 router.get(
-  "/:email",
+  "/getByEmail/:email",
   passportCall("jwt"),
   authorization(["admin", "alumno"]),
   async (req, res) => {

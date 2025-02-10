@@ -6,7 +6,7 @@ import { authorization, passportCall } from "../utils/utils.js";
 //ver el SORT por apellido
 const router = Router();
 
-//Muestra una lista con todas las clases
+//Muestra una lista con los nombres de todas las clases
 router.get(
   "/",
   passportCall("jwt"),
@@ -24,6 +24,30 @@ router.get(
   }
 );
 
+router.get("/year/:year", passportCall("jwt"), authorization("admin"), async (req, res) => {
+  try{
+    const { year } = req.params; 
+
+    const listaClases = await clasesModel.find({ año: year })
+
+    if(!listaClases){
+      return res.json({
+        status: 404,
+        message: "No hay clases registradas para el año" + year
+      })
+    }
+
+    return res.json({
+      status: 200,
+      listaClases
+    })
+  }catch (error){
+     return res.json({
+       message: "Error",
+       error,
+     });
+  }
+});
 //Ver las clases en las que está instripto ese alumno en ese año
 router.get(
   "/alumno/:idAlumno/:year",
@@ -167,7 +191,7 @@ router.post(
   }
 );
 
-//Agregar una nueva clase
+//Agregar una nueva clase, si ya existe el id, modificarla
 router.post(
   "/",
   passportCall("jwt"),
@@ -175,7 +199,7 @@ router.post(
   async (req, res) => {
     try {
       const clase = req.body;
-
+      console.log(clase)
       const year = clase.año;
       const name = clase.nombre;
 
@@ -184,11 +208,15 @@ router.post(
         año: year,
       });
       if (claseExists) {
-        console.log("existe");
+        console.log("llego al modificador")
+        const claseModificada = await clasesModel.updateOne(
+          { _id: claseExists._id }, 
+          clase
+        )
         return res.json({
-          status: 500,
-          message: "La clase ya existe en la base de datos",
-        });
+          status: 201,
+          message: "Clase modificada con éxito"
+        })
       }
 
       const response = await clasesModel.create(clase);
@@ -252,5 +280,33 @@ router.delete(
     }
   }
 );
+
+//Eliminar una clase 
+
+router.delete("/clase/:id",   passportCall("jwt"),
+  authorization("admin"),
+  async (req, res) => {
+    try{
+      const { id } = req.params;
+
+      const clase = await clasesModel.findByIdAndDelete(id);
+      if(!clase){
+        return res.json({
+          status: 404, 
+          message: "No se encontró la clase"
+        })
+      }
+      return res.json({
+        status: 200, 
+        message: "Clase eliminada"
+      })
+
+    }catch(error){
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
+  })
 
 export default router;

@@ -111,6 +111,33 @@ export const sendComprobante = async (email, fecha, importe) => {
   }
 };
 
+export const sendTpConfirmation = async (email, fecha, nombre, clase) => {
+  try {
+    let result = transporter.sendMail({
+      from: "Campus virtual circo de las artes - " + config.emailAcount,
+      to: email,
+      subject: "TP subido",
+      html: `<div>
+      <p>El trabajo práctico se subió correctamente a la página.
+      <ul>
+        <li>Fecha de carga: ${fecha}</li>
+        <li>Nombre del archivo: ${nombre}</li>
+        <li>Clase: ${clase}</li>
+        </ul>
+      </p>
+      </div>`,
+    });
+
+    console.log(`Email enviado a: ${email}`);
+
+    return result;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};
+
+
 //Reset de contraseña:
 
 const mailOptionsToReset = {

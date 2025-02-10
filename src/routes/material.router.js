@@ -16,7 +16,6 @@ router.get(
   async (req, res) => {
     try {
       const { nombreClase, year } = req.params;
-      console.log(nombreClase, year);
       const clase = await clasesModel
         .findOne({ nombre: nombreClase, año: year })
         .populate("archivos")

@@ -3,31 +3,29 @@ import { loader } from "../utils/loader.js";
 import { authorization, passportCall } from "../utils/utils.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
 import { tpModel } from "../../models/tp.model.js";
+import { sendTpConfirmation } from "./email.router.js";
 
 const router = Router();
 
-//ver los tps de un alumno por id
+//Ver todos los tps (admin)
 router.get(
-  "/:id",
+  "/",
   passportCall("jwt"),
-  authorization("alumno"),
+  authorization("admin"),
   async (req, res) => {
-    try{
-      const { id } = req.params;
-      const alumno = await alumnosModel.findOne({ _id: id });
-      if(!alumno){
+    try {
+      const listaTps = await tpModel.find().populate("idAlumno").sort("fecha");
+      if (!listaTps) {
         return res.json({
           status: 404,
-          message: "Alumno no encontrado"
-        })
+          message: "No se encontraron trabajos prácticos",
+        });
       }
-
-      const tps = alumno.tps; 
       return res.json({
         status: 200,
-        tps
-      })
-    }catch(error){
+        listaTps,
+      });
+    } catch (error) {
       return res.json({
         message: "Error",
         error,
@@ -36,6 +34,38 @@ router.get(
   }
 );
 
+//ver los tps de un alumno por id
+router.get(
+  "/:id",
+  passportCall("jwt"),
+  authorization("alumno"),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const alumno = await alumnosModel
+        .findOne({ _id: id })
+        .populate("tps")
+        .sort({ fecha: -1 });
+      if (!alumno) {
+        return res.json({
+          status: 404,
+          message: "Alumno no encontrado",
+        });
+      }
+
+      const tps = alumno.tps;
+      return res.json({
+        status: 200,
+        tps,
+      });
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
+  }
+);
 
 //subir un tp (alumno)
 router.post(
@@ -64,7 +94,7 @@ router.post(
         url: req.file.path,
       };
 
-      const response = await tpModel.create(tp)
+      const response = await tpModel.create(tp);
       const alumno = await alumnosModel.findById({ _id: data.idAlumno });
       if (!alumno) {
         return res.json({
@@ -75,6 +105,15 @@ router.post(
 
       alumno.tps.push(response);
       await alumnosModel.findByIdAndUpdate({ _id: data.idAlumno }, alumno);
+
+      //enviar email de confirmación:
+      sendTpConfirmation(
+        alumno.email,
+        data.fecha,
+        req.file.originalname,
+        data.clase
+      );
+
       res.json({
         status: 200,
         message: "Archivo cargado correctamente.",
@@ -90,7 +129,6 @@ router.post(
   }
 );
 
-
 router.delete(
   "/:id",
   passportCall("jwt"),
@@ -98,14 +136,14 @@ router.delete(
   async (req, res) => {
     try {
       const { id } = req.params;
-      console.log(id)
+      console.log(id);
       const archivo = await tpModel.findByIdAndDelete(id);
 
-      if(!archivo){
+      if (!archivo) {
         return res.json({
           status: 404,
-          message: "No se encontró el archivo"
-        })
+          message: "No se encontró el archivo",
+        });
       }
 
       return res.json({
