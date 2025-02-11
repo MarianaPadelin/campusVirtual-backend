@@ -23,6 +23,7 @@ Dentro de esta vista, poder agregar una clase desde el selector de clase, agreg�
 => Chequear todos los Swal para el manejo de errores
 => Poner loaders
 => Ver que las autorizaciones estén activadas en las rutas
+=> agregar , { withCredentials: true } a las rutas de front
 => Borrar logs
 
 Subir archivos: 
@@ -49,9 +50,6 @@ Inicio de sesión:
 => Loader en login ✓
 => poner logout como función y no como componente ✓ 
 
-Validaciones :
-=> agregar , { withCredentials: true } a las rutas de front
-=> Agregar alumno a la clase: el alumno no puede estar repetido (y poner nombre y apellido, no solo apellido) ✓
 
 Etapa 4 - integración:
 => Ver mayúsculas y minúsculas y espacios cuando agrego a un alumno a la clase
@@ -67,7 +65,7 @@ Etapa 4 - integración:
 => vista de pagos por mes en admin y de historial de pagos de alumno en info de alumno ✓
 => editar y borrar clase ✓
 => editar y borrar pagos ✓
-=> certificado de alumno regular
+=> certificado de alumno regular ✓
 
 Errores: 
 => Cuando se agrega un alumno a una clase no se refresca automático
@@ -86,3 +84,4 @@ Errores:
 => Se traba al registrarse si se edita el mail
 => Error de autorización para ver los alumnos anotados en una clase (admin) o al refrescar la página
 => ver que no se pueda mandar un pago nulo en cargar pagos admin ✓
+=> poder eliminar certificados? se ve solo el primero por año

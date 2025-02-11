@@ -37,6 +37,13 @@ const alumnosSchema = new Schema({
       // id: false
     },
   ],
+  certificados: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "certificados",
+      // id: false
+    },
+  ],
 });
 
 //Populate de las notas con un middleware

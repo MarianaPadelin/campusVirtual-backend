@@ -4,6 +4,7 @@ import { authorization, passportCall } from "../utils/utils.js";
 import { clasesModel } from "../../models/clases.model.js";
 import { materialModel } from "../../models/material.model.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
+import { certificadoModel } from "../../models/certificados.model.js";
 
 const router = Router();
 
@@ -48,6 +49,39 @@ router.get(
     }
   }
 );
+
+//El alumno ve su certificado por año
+router.get(
+  "/certificado/:id/:year",
+  passportCall("jwt"),
+  authorization("alumno"),
+  async (req, res) => {
+    try {
+      const { id, year } = req.params;
+      const certificados = await certificadoModel.find({ id_alumno: id })
+      console.log("certificados: ", certificados)
+      const certActual =  certificados.filter((c) => c.fecha.includes(year))[0]
+      console.log("cert actual: ", certActual)
+      
+      if (!certActual) {
+        return res.json({
+          status: 404,
+          message: "No tienes un certificado para este año",
+        });
+      }
+      return res.json({
+        status: 200,
+        certActual,
+      });
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
+  }
+);
+
 
 //Subir material didáctico
 router.post(
@@ -117,6 +151,76 @@ router.post(
     }
   }
 );
+
+//subir certificado
+router.post(
+  "/certificado",
+  passportCall("jwt"),
+  authorization("admin"),
+  loader.single("file"),
+  async (req, res) => {
+    try {
+      const data = req.body;
+      console.log(data)
+      //data me tiene que traer nombre del alumno, apellido, fecha y año
+      if (!req.file) {
+        return res.json({
+          status: 404,
+          message: "No se encontró ningún archivo.",
+        });
+      }
+
+      const alumno = await alumnosModel.findOne({ nombre: data.nombreAlumno, apellido: data.apellidoAlumno});
+            if (!alumno) {
+              return res.json({
+                status: 404,
+                message: "No se encontró al alumno.",
+              });
+            }
+      //primero creo el archivo en su coleccion material
+      const archivo = {
+        nombre: req.file.originalname,
+        fecha: data.fecha,
+        id_alumno: alumno._id, //ver
+        año: data.año,
+        url: req.file.path,
+      };
+
+      const archivoExiste = await certificadoModel.findOne({
+        nombre: req.file.originalname,
+        id_alumno: alumno._id,
+        año: data.año,
+      });
+
+      if (archivoExiste) {
+        return res.json({
+          status: 400,
+          message: `Ya existe un certificado para este alumno en el año ${data.año}`,
+        });
+      }
+
+      const response = await certificadoModel.create(archivo);
+
+      //Lo agrego al alumno:
+
+
+      alumno.certificados.push(response);
+
+      await alumnosModel.findByIdAndUpdate(alumno._id, alumno);
+      res.json({
+        status: 200,
+        message: "Certificado cargado correctamente.",
+      });
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
+  }
+);
+
+
 
 router.delete(
   "/:id",
