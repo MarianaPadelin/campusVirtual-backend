@@ -25,6 +25,8 @@ Dentro de esta vista, poder agregar una clase desde el selector de clase, agreg�
 => Ver que las autorizaciones estén activadas en las rutas
 => agregar , { withCredentials: true } a las rutas de front
 => Borrar logs
+=> Cambiar los "error" en las rutas de los catch por "error del servidor"
+
 
 Subir archivos: 
 => Responsive, que en el celu en vez de "descargar archivo haya un icono de una flecha ✓
@@ -61,14 +63,13 @@ Etapa 4 - integración:
 => Subir material admin ✓
 => Ver material alumno ✓
 => ver tps admin
-=> Cambiar los "error" en las rutas de los catch por "error del servidor"
 => vista de pagos por mes en admin y de historial de pagos de alumno en info de alumno ✓
 => editar y borrar clase ✓
 => editar y borrar pagos ✓
 => certificado de alumno regular ✓
 
 Errores: 
-=> Cuando se agrega un alumno a una clase no se refresca automático
+=> Cuando se agrega un alumno a una clase no se refresca automático ✓
 => Solo se ven las asistencias del alumno si ya faltó ✓
 => No borra al usuario cuando borro al alumno de la base de datos ✓
 => Cuando se registra un alumno no aparece automaticamente en la lista ✓
@@ -82,6 +83,6 @@ Errores:
 => Ver mensaje de "admin conectado" ✓
 => Sacar la casita ✓
 => Se traba al registrarse si se edita el mail
-=> Error de autorización para ver los alumnos anotados en una clase (admin) o al refrescar la página
+=> Error de autorización para ver los alumnos anotados en una clase (admin) o al refrescar la página ✓
 => ver que no se pueda mandar un pago nulo en cargar pagos admin ✓
 => poder eliminar certificados? se ve solo el primero por año

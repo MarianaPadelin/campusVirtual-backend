@@ -143,7 +143,9 @@ router.post(
         .populate("alumnos");
 
       if (!clase) {
-        return res.json({ message: "Clase no encontrada" });
+        return res.json({ 
+          status: 404, 
+          message: "Clase no encontrada" });
       }
 
       const alumno = await alumnosModel.findOne({
