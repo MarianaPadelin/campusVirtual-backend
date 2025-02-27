@@ -86,3 +86,5 @@ Errores:
 => Error de autorización para ver los alumnos anotados en una clase (admin) o al refrescar la página ✓
 => ver que no se pueda mandar un pago nulo en cargar pagos admin ✓
 => poder eliminar certificados? se ve solo el primero por año
+=> el cartel de asistencias registradas correctamente dura muy poco
+=> las notas no se borran luego de cargarlas

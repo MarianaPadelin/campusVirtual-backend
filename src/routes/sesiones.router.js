@@ -27,26 +27,42 @@ router.post("/register", async (req, res) => {
       });
     }
     const esAlumno = await alumnosModel.findOne({ email });
-    const esAdmin = "admin@gmail.com";
-    if (!esAlumno || !esAdmin) {
+    const esAdmin = config.adminMail;
+    const esAdmin2 = config.adminMail2; 
+    if (!esAlumno && !esAdmin && !esAdmin2) {
       return res.json({
         status: 500,
         message: "Este email no está registrado",
       });
     }
+    if (email === esAdmin || email === esAdmin2) {
+      const user = {
+        email,
+        password: createHash(password),
+        role: "admin",
+      };
+      const result = await userModel.create(user);
+      sendEmail(email);
+      res.json({
+        status: 200,
+        message: "Usuario creado correctamente",
+        result,
+      });
+    } else {
+      const user = {
+        email,
+        password: createHash(password),
+      };
+      const result = await userModel.create(user);
+      sendEmail(email);
+      res.json({
+        status: 200,
+        message: "Usuario creado correctamente",
+        result,
+      });
+    }
 
-    const user = {
-      email,
-      password: createHash(password),
-    };
-
-    const result = await userModel.create(user);
-    sendEmail(email);
-    res.json({
-      status: 200,
-      message: "Usuario creado correctamente",
-      result,
-    });
+    
   } catch (error) {
     return res.json({
       message: "Error",
@@ -86,8 +102,8 @@ router.post("/login", async (req, res) => {
       role: userExists.role,
     };
     // console.log(tokenUser);
-    const access_token = generateJWToken(tokenUser); //here´s the error
-    // console.log(access_token);
+    const access_token = generateJWToken(tokenUser); 
+    console.log(tokenUser);
 
     res.cookie("jwtCookieToken", access_token, {
       httpOnly: true, // Prevents JavaScript access for security
@@ -96,7 +112,8 @@ router.post("/login", async (req, res) => {
 
       maxAge: 2 * 60 * 60 * 1000, // 2 hours
     });
-    if (email === "admin@gmail.com") {
+
+    if (email === config.adminMail || email === config.adminMail2) {
       return res.json({
         status: 201,
         tokenUser,
@@ -104,7 +121,6 @@ router.post("/login", async (req, res) => {
         jwt: access_token,
       });
     }
-
     return res.json({
       status: 200,
       tokenUser,
@@ -132,7 +148,7 @@ router.put("/resetPassword", async (req, res) => {
       });
     }
     const esAlumno = await alumnosModel.findOne({ email });
-    if (!esAlumno && email !== config.adminMail) {
+    if (!esAlumno && email !== config.adminMail && email !== config.adminMail2) {
       return res.json({
         status: 500,
         message: "Este email no está registrado como un alumno de la escuela",
@@ -178,7 +194,7 @@ router.delete(
         });
       }
 
-      await userModel.deleteOne(userExists)
+      await userModel.deleteOne(userExists);
       return res.json({
         status: 200,
         message: "Usuario eliminado",

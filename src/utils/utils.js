@@ -22,7 +22,6 @@ export const authToken = (req, res, next) => {
   console.log("Token presente: ", authHeader);
 
   if (!authHeader) {
-    console.log("I get here"); //it takes me here
     return res
       .status(401)
       .json({ message: "No tiene acceso, credenciales incorrectas" });

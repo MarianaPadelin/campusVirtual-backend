@@ -21,6 +21,7 @@ export default {
   secret: process.env.secret,
   privateKey: process.env.PRIVATE_KEY,
   adminMail: process.env.ADMIN_MAIL,
+  adminMail2: process.env.ADMIN_MAIL_2,
   //   adminPass: process.env.ADMIN_PASSWORD,
   //   clientID: process.env.clientID,
   //   clientSecret: process.env.clientSecret,
@@ -32,5 +33,4 @@ export default {
   //   maxLevelFile: process.env.LEVEL_FILE,
   restoreLink: process.env.RESTORE_LINK,
   rootUrl: process.env.rootUrl,
-  
 };
