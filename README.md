@@ -88,3 +88,4 @@ Errores:
 => poder eliminar certificados? se ve solo el primero por año
 => el cartel de asistencias registradas correctamente dura muy poco
 => las notas no se borran luego de cargarlas
+=> perfil de alumno en movil
