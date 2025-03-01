@@ -88,7 +88,7 @@ Errores:
 => poder eliminar certificados? se ve solo el primero por año
 => el cartel de asistencias registradas correctamente dura muy poco
 => las notas no se borran luego de cargarlas
-=> perfil de alumno en movil
-=> cambiar el año por default dinamico a todas las vistas (buscar useState(2025))
+=> perfil de alumno en movil ✓
+=> cambiar el año por default dinamico a todas las vistas (buscar useState(2025)) ✓
 =>permitir ver pdf en cloudinary ✓
-=> Poner loaders en las vistas de alumno
+=> Poner loaders en las vistas de alumno ✓
