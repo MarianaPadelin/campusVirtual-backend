@@ -20,12 +20,8 @@ Dentro de esta vista, poder agregar una clase desde el selector de clase, agreg�
 => Sacar el selector de mes y poner función de fecha en pagos admin ✓
 
 => Nuevo env dev ✓
-=> Chequear todos los Swal para el manejo de errores
-=> Poner loaders
-=> Ver que las autorizaciones estén activadas en las rutas
-=> agregar , { withCredentials: true } a las rutas de front
-=> Borrar logs
-=> Cambiar los "error" en las rutas de los catch por "error del servidor"
+=> Poner loaders ✓
+=> Ver que las autorizaciones estén activadas en las rutas ✓
 
 
 Subir archivos: 
@@ -54,10 +50,7 @@ Inicio de sesión:
 
 
 Etapa 4 - integración:
-=> Ver mayúsculas y minúsculas y espacios cuando agrego a un alumno a la clase
 => poner timer en los Swal ✓
-=> Si un alumno no está registrado me aparece "usuario y contraseña incorrectos" ✓
-=> si quiero agregar alumnos de una clase no registrada me aparece "error desconocido" 
 => Ver asistencias alumno ✓
 => Subir tp alumno ✓
 => Subir material admin ✓
@@ -74,7 +67,6 @@ Errores:
 => No borra al usuario cuando borro al alumno de la base de datos ✓
 => Cuando se registra un alumno no aparece automaticamente en la lista ✓
 => Si no tiene sesión iniciada queda en loader, poner un timer de 10 segundos y volver al inicio ✓
-=> en cambiar contraseña puedo poner cualquier mail y lo toma como correcto
 => Se ve el loader cuando voy a cambiar contraseña (permisos en app) ✓
 => poner mail dinamico en registrar usuario ✓
 => Poner loaders en iniciar sesión, registrarse, enviar mail, reset pass ✓
@@ -82,13 +74,22 @@ Errores:
 => Asegurarse de que se vea un forbidden o mandar a login si no tiene los permisos (sin login) ✓
 => Ver mensaje de "admin conectado" ✓
 => Sacar la casita ✓
-=> Se traba al registrarse si se edita el mail
 => Error de autorización para ver los alumnos anotados en una clase (admin) o al refrescar la página ✓
 => ver que no se pueda mandar un pago nulo en cargar pagos admin ✓
 => poder eliminar certificados? se ve solo el primero por año
-=> el cartel de asistencias registradas correctamente dura muy poco
-=> las notas no se borran luego de cargarlas
 => perfil de alumno en movil ✓
 => cambiar el año por default dinamico a todas las vistas (buscar useState(2025)) ✓
 =>permitir ver pdf en cloudinary ✓
 => Poner loaders en las vistas de alumno ✓
+
+Final:
+=> Chequear todos los Swal para el manejo de errores
+=> agregar , { withCredentials: true } a las rutas de front
+=> Borrar logs
+=> Cambiar los "error" en las rutas de los catch por "error del servidor"
+=> Ver mayúsculas y minúsculas y espacios cuando agrego a un alumno a la clase
+=> en cambiar contraseña puedo poner cualquier mail y lo toma como correcto
+=> Se traba al registrarse si se edita el mail ✓
+=> foto de perfil de alumnos?
+=> el cartel de asistencias registradas correctamente dura muy poco
+=> las notas no se borran luego de cargarlas

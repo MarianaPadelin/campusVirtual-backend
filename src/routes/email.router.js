@@ -35,34 +35,6 @@ const mailOptions = {
     </div>`,
 };
 
-// // router.get("/", (req, res) => {
-//   export const sendMail = (req, res) =>{
-//     const
-//   try {
-//     transporter.sendMail(mailOptions, (error, info) => {
-//       if (error) {
-//         console.error(error);
-//         res.json({
-//           status: 400,
-//           message: "Error enviando el mensaje",
-//           payload: error,
-//         });
-//       }
-//       console.log("Mensaje enviado", info.messageId);
-//       res.json({
-//         message: "Envío correcto",
-//         payload: info,
-//       });
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.json({
-//       status: 500,
-//       message: "No se pudo enviar el mail",
-//       error,
-//     });
-//   }
-// };
 
 export const sendEmail = async (email) => {
   try {

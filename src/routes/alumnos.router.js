@@ -2,6 +2,7 @@ import { Router } from "express";
 import { alumnosModel } from "../../models/alumnos.model.js";
 import { authorization, passportCall } from "../utils/utils.js";
 import { clasesModel } from "../../models/clases.model.js";
+import { userModel } from "../../models/user.model.js";
 
 const router = Router();
 
@@ -31,7 +32,10 @@ router.get(
   async (req, res) => {
     try {
       const { id } = req.params;
-      const alumno = await alumnosModel.findOne({ _id: id }).populate("notas").populate("pagos");
+      const alumno = await alumnosModel
+        .findOne({ _id: id })
+        .populate("notas")
+        .populate("pagos");
       if (!alumno) {
         return res.json({ message: `Alumno no encontrado` });
       }
@@ -140,20 +144,20 @@ router.get(
         };
       });
 
-    
-      if(asistenciasPorAnio.length === 0){   //si no hay asistencias en ese año
-          return res.json({
-            status: 200,
-            asistenciasPorClase: [],
-          });
+      if (asistenciasPorAnio.length === 0) {
+        //si no hay asistencias en ese año
+        return res.json({
+          status: 200,
+          asistenciasPorClase: [],
+        });
       }
-      asistenciasPorAnio.forEach(({ clase, asistencia: ausente }) => { //asistencia: true es ausente
+      asistenciasPorAnio.forEach(({ clase, asistencia: ausente }) => {
+        //asistencia: true es ausente
         if (ausente) {
           asistenciasPorClase[clase].ausentes += 1; // Count absences
         }
       });
 
-    
       //Devuelve un array
       const asistenciasPorClaseArray = Object.entries(asistenciasPorClase).map(
         ([clase, data]) => ({
@@ -210,23 +214,42 @@ router.put(
     try {
       const { id } = req.params;
 
-      const alumno = alumnosModel.find({ _id: id });
+      const alumno = await alumnosModel.findOne({ _id: id });
+      console.log(alumno);
       if (!alumno) {
         return res.json({ message: `Alumno no encontrado` });
       }
 
       const alumnoActualizado = req.body;
+      console.log(
+        "comparativa de mails: ",
+        alumnoActualizado.email,
+        alumno.email
+      );
 
       const response = await alumnosModel.updateOne(
         { _id: id },
         alumnoActualizado
       );
-
       if (response.modifiedCount == 0) {
         return res.json({
           message: "No se pudieron actualizar los datos",
         });
       }
+
+      //si se modifica el email, eliminar el usuario con el email viejo
+      if (alumnoActualizado.email !== alumno.email) {
+       const usuario =  await userModel.findOneAndDelete({ email: alumno.email })
+       console.log(usuario)
+       if(!usuario){
+        return res.json({
+          status: 200,
+          message: `Alumno actualizado`,
+          response,
+        });
+       }
+      }
+
       return res.json({
         status: 200,
         message: `Alumno actualizado`,

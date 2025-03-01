@@ -29,7 +29,8 @@ router.post("/register", async (req, res) => {
     const esAlumno = await alumnosModel.findOne({ email });
     const esAdmin = config.adminMail;
     const esAdmin2 = config.adminMail2; 
-    if (!esAlumno && !esAdmin && !esAdmin2) {
+    if (!esAlumno && email !== esAdmin &&  email !== esAdmin2) {
+
       return res.json({
         status: 500,
         message: "Este email no está registrado",
@@ -43,7 +44,7 @@ router.post("/register", async (req, res) => {
       };
       const result = await userModel.create(user);
       sendEmail(email);
-      res.json({
+     return res.json({
         status: 200,
         message: "Usuario creado correctamente",
         result,
@@ -55,7 +56,7 @@ router.post("/register", async (req, res) => {
       };
       const result = await userModel.create(user);
       sendEmail(email);
-      res.json({
+     return  res.json({
         status: 200,
         message: "Usuario creado correctamente",
         result,
