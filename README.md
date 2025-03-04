@@ -95,3 +95,4 @@ Final:
 => las notas no se borran luego de cargarlas
 => no anda el registro en el deploy
 => volver a cambiar el mail de admin 2
+=> fijarse que passportcall y auth no hayan quedado comentados en ninguna ruta
