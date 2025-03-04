@@ -93,3 +93,5 @@ Final:
 => foto de perfil de alumnos?
 => el cartel de asistencias registradas correctamente dura muy poco
 => las notas no se borran luego de cargarlas
+=> no anda el registro en el deploy
+=> volver a cambiar el mail de admin 2
