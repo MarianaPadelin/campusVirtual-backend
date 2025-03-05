@@ -5,7 +5,6 @@ import { userModel } from "../../models/user.model.js";
 import { v4 } from "uuid";
 
 const router = Router();
-const recieverEmail = "marianapadelin@gmail.com";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -25,15 +24,6 @@ transporter.verify((error, success) => {
     console.log("Servicio listo para mensajería");
   }
 });
-
-const mailOptions = {
-  from: "Campus virtual circo de las artes - " + config.emailAcount,
-  to: recieverEmail,
-  subject: "Registro exitoso",
-  html: `<div>
-    <p>El correo se registró correctamente en el campus virtual
-    </div>`,
-};
 
 
 export const sendEmail = async (email) => {
@@ -183,30 +173,4 @@ router.get("/reset/:token", (req, res) => {
   return res.redirect(`${config.rootUrl}/resetPassword/${[token]}`);
 });
 
-//esta ruta ya está en sessions
-// export const restorePassword = async (req, res) => {
-//   try {
-//     const { email, password, repeatPassword } = req.body;
-//     if (password !== repeatPassword) {
-//       req.logger.error("Both passwords must be the same");
-//       return res.status(401).send("Both passwords must be the same");
-//     }
-//     const userExists = await userService.findUser(email);
-
-//     if (!userExists) {
-//       return res.status(404).send("Email not found");
-//     }
-//     if (validatePass(userExists, password)) {
-//       req.logger.error("Can't use previous password");
-//       return res.status(400).send("Can't use previous password");
-//     }
-//     const result = await userService.updatePassword(email, password);
-
-//     return res.status(200).send("contraseña actualizada");
-//   } catch (error) {
-
-//     logger.error(error);
-//     return error;
-//   }
-// };
 export default router;

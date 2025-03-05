@@ -161,6 +161,8 @@ router.post(
   async (req, res) => {
     try {
       const data = req.body;
+      const nombreMayuscula = data.nombreAlumno.toUpperCase();
+      const apellidoMayuscula = data.apellidoAlumno.toUpperCase();
       console.log(data)
       //data me tiene que traer nombre del alumno, apellido, fecha y año
       if (!req.file) {
@@ -170,7 +172,7 @@ router.post(
         });
       }
 
-      const alumno = await alumnosModel.findOne({ nombre: data.nombreAlumno, apellido: data.apellidoAlumno});
+      const alumno = await alumnosModel.findOne({ nombre: nombreMayuscula, apellido: apellidoMayuscula});
             if (!alumno) {
               return res.json({
                 status: 404,

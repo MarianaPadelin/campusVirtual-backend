@@ -18,32 +18,35 @@ const router = Router();
 router.post("/register", async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    const userExists = await userModel.findOne({ email });
+    const datosRegistro = {
+      email: email.toLowerCase(),
+      password
+    }
+    const userExists = await userModel.findOne({ email: datosRegistro.email });
     if (userExists) {
       return res.json({
         status: 400,
         message: "El usuario ya está registrado",
       });
     }
-    const esAlumno = await alumnosModel.findOne({ email });
+    const esAlumno = await alumnosModel.findOne({ email: datosRegistro.email });
     const esAdmin = config.adminMail;
     const esAdmin2 = config.adminMail2; 
-    if (!esAlumno && email !== esAdmin &&  email !== esAdmin2) {
+    if (!esAlumno && datosRegistro.email !== esAdmin &&  datosRegistro.email !== esAdmin2) {
 
       return res.json({
         status: 500,
         message: "Este email no está registrado",
       });
     }
-    if (email === esAdmin || email === esAdmin2) {
+    if (datosRegistro.email === esAdmin || datosRegistro.email === esAdmin2) {
       const user = {
-        email,
+        email: datosRegistro.email,
         password: createHash(password),
         role: "admin",
       };
       const result = await userModel.create(user);
-      sendEmail(email);
+      sendEmail(datosRegistro.email);
      return res.json({
         status: 200,
         message: "Usuario creado correctamente",
@@ -51,11 +54,11 @@ router.post("/register", async (req, res) => {
       });
     } else {
       const user = {
-        email,
+        email:datosRegistro.email,
         password: createHash(password),
       };
       const result = await userModel.create(user);
-      sendEmail(email);
+      sendEmail(datosRegistro.email);
      return  res.json({
         status: 200,
         message: "Usuario creado correctamente",
@@ -76,9 +79,12 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-
+    const datosLogin = {
+      email: email.toLowerCase(),
+      password
+    }
     //validación: El email tiene que estar en la db de alumnos pero no en la de usuarios
-    const userExists = await userModel.findOne({ email });
+    const userExists = await userModel.findOne({ email: datosLogin.email });
     if (!userExists) {
       return res.json({
         status: 400,
@@ -114,7 +120,7 @@ router.post("/login", async (req, res) => {
       maxAge: 2 * 60 * 60 * 1000, // 2 hours
     });
 
-    if (email === config.adminMail || email === config.adminMail2) {
+    if (datosLogin.email === config.adminMail || datosLogin.email === config.adminMail2) {
       return res.json({
         status: 201,
         tokenUser,
@@ -140,16 +146,20 @@ router.post("/login", async (req, res) => {
 router.put("/resetPassword", async (req, res) => {
   try {
     const { email, password } = req.body;
+    const datosReset = {
+      email: email.toLowerCase(),
+      password
+    }
     const { token } = req.params;
-    const userExists = await userModel.findOne({ email });
+    const userExists = await userModel.findOne({ email: datosReset.email });
     if (!userExists) {
       return res.json({
         status: 400,
         message: "El usuario no existe",
       });
     }
-    const esAlumno = await alumnosModel.findOne({ email });
-    if (!esAlumno && email !== config.adminMail && email !== config.adminMail2) {
+    const esAlumno = await alumnosModel.findOne({ email: datosReset.email });
+    if (!esAlumno && datosReset.email !== config.adminMail && datosReset.email !== config.adminMail2) {
       return res.json({
         status: 500,
         message: "Este email no está registrado como un alumno de la escuela",
@@ -157,7 +167,7 @@ router.put("/resetPassword", async (req, res) => {
     }
 
     const user = {
-      email,
+      email: datosReset.email,
       password: createHash(password),
     };
 

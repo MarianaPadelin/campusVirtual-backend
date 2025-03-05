@@ -3,6 +3,9 @@ import { alumnosModel } from "../../models/alumnos.model.js";
 import { authorization, passportCall } from "../utils/utils.js";
 import { clasesModel } from "../../models/clases.model.js";
 import { userModel } from "../../models/user.model.js";
+import { notasModel } from "../../models/notas.model.js";
+import { asistenciasModel } from "../../models/asistencias.model.js";
+import { tpModel } from "../../models/tp.model.js";
 
 const router = Router();
 
@@ -187,7 +190,14 @@ router.post(
   authorization("admin"),
   async (req, res) => {
     try {
-      const alumno = req.body;
+      const { nombre, apellido, email, celular } = req.body;
+
+      const alumno = {
+        nombre: nombre.toUpperCase(),
+        apellido: apellido.toUpperCase(),
+        email: email.toLowerCase(),
+        celular,
+      };
       const response = await alumnosModel.create(alumno);
       return res.json({
         status: 200,
@@ -196,7 +206,7 @@ router.post(
       });
     } catch (error) {
       return res.json({
-        message: "Error",
+        message: "El email ya existe en la base de datos",
         error,
       });
     }
@@ -220,7 +230,13 @@ router.put(
         return res.json({ message: `Alumno no encontrado` });
       }
 
-      const alumnoActualizado = req.body;
+      const { nombre, apellido, email, celular } = req.body;
+      const alumnoActualizado = {
+        nombre: nombre.toUpperCase(),
+        apellido: apellido.toUpperCase(),
+        email: email.toLowerCase(),
+        celular,
+      };
       console.log(
         "comparativa de mails: ",
         alumnoActualizado.email,
@@ -239,15 +255,17 @@ router.put(
 
       //si se modifica el email, eliminar el usuario con el email viejo
       if (alumnoActualizado.email !== alumno.email) {
-       const usuario =  await userModel.findOneAndDelete({ email: alumno.email })
-       console.log(usuario)
-       if(!usuario){
-        return res.json({
-          status: 200,
-          message: `Alumno actualizado`,
-          response,
+        const usuario = await userModel.findOneAndDelete({
+          email: alumno.email,
         });
-       }
+        console.log(usuario);
+        if (!usuario) {
+          return res.json({
+            status: 200,
+            message: `Alumno actualizado`,
+            response,
+          });
+        }
       }
 
       return res.json({
@@ -277,6 +295,13 @@ router.delete(
       if (!alumno) {
         return res.json({ message: `Alumno no encontrado` });
       }
+
+      await notasModel.deleteMany({ id_alumno: id });
+      await asistenciasModel.deleteMany({ id_alumno: id });
+      await tpModel.deleteMany({ idAlumno: id });
+      await certificadoModel.deleteMany({ id_alumno: id });
+
+      await userModel.deleteOne({ email: alumno.email });
       return res.json({
         status: 200,
         message: `Alumno borrado`,

@@ -2,6 +2,7 @@ import { Router } from "express";
 import { clasesModel } from "../../models/clases.model.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
 import { authorization, passportCall } from "../utils/utils.js";
+import { materialModel } from "../../models/material.model.js";
 
 //ver el SORT por apellido
 const router = Router();
@@ -24,30 +25,36 @@ router.get(
   }
 );
 
-router.get("/year/:year", passportCall("jwt"), authorization("admin"), async (req, res) => {
-  try{
-    const { year } = req.params; 
+router.get(
+  "/year/:year",
+  passportCall("jwt"),
+  authorization("admin"),
+  async (req, res) => {
+    try {
+      const { year } = req.params;
 
-    const listaClases = await clasesModel.find({ año: year })
+      const listaClases = await clasesModel.find({ año: year });
 
-    if(!listaClases){
+      if (!listaClases) {
+        return res.json({
+          status: 404,
+          message: "No hay clases registradas para el año" + year,
+        });
+      }
+
       return res.json({
-        status: 404,
-        message: "No hay clases registradas para el año" + year
-      })
+        status: 200,
+        listaClases,
+      });
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
     }
-
-    return res.json({
-      status: 200,
-      listaClases
-    })
-  }catch (error){
-     return res.json({
-       message: "Error",
-       error,
-     });
   }
-});
+);
+
 //Ver las clases en las que está instripto ese alumno en ese año
 router.get(
   "/alumno/:idAlumno/:year",
@@ -57,26 +64,24 @@ router.get(
     try {
       const { idAlumno, year } = req.params;
 
-      const clases = await clasesModel.find({ alumnos: idAlumno, año: year })
+      const clases = await clasesModel.find({ alumnos: idAlumno, año: year });
 
-      if(!clases){
+      if (!clases) {
         return res.json({
           status: 404,
-          message: "No se encontraron clases para este año"
-        })
+          message: "No se encontraron clases para este año",
+        });
       }
 
       const nombreClases = [];
 
-      clases.map((clase) => (
-        nombreClases.push(clase.nombre)
-      ))
+      clases.map((clase) => nombreClases.push(clase.nombre));
 
-      console.log(nombreClases)
+      console.log(nombreClases);
       return res.json({
         status: 200,
-        nombreClases
-      })
+        nombreClases,
+      });
     } catch (error) {
       return res.json({
         message: "Error",
@@ -137,20 +142,26 @@ router.post(
   async (req, res) => {
     try {
       const { nombreClase, año, nombre, apellido } = req.body;
-      console.log(nombreClase, año, nombre, apellido);
+      const nuevaClase = {
+        nombreClase: nombreClase.toUpperCase(),
+        año,
+        nombre: nombre.toUpperCase(),
+        apellido: apellido.toUpperCase(),
+      };
       const clase = await clasesModel
-        .findOne({ nombre: nombreClase, año: año })
+        .findOne({ nombre: nuevaClase.nombreClase, año: año })
         .populate("alumnos");
 
       if (!clase) {
-        return res.json({ 
-          status: 404, 
-          message: "Clase no encontrada" });
+        return res.json({
+          status: 404,
+          message: "Clase no encontrada",
+        });
       }
 
       const alumno = await alumnosModel.findOne({
-        nombre: nombre,
-        apellido: apellido,
+        nombre: nuevaClase.nombre,
+        apellido: nuevaClase.apellido,
       });
 
       if (!alumno) {
@@ -200,34 +211,40 @@ router.post(
   authorization("admin"),
   async (req, res) => {
     try {
-      const clase = req.body;
-      console.log(clase)
-      const year = clase.año;
-      const name = clase.nombre;
+      const { _id, nombre, profesor, año, faltas } = req.body;
 
-      const claseExists = await clasesModel.findOne({
-        nombre: name,
-        año: year,
-      });
-      if (claseExists) {
-        console.log("llego al modificador")
-        const claseModificada = await clasesModel.updateOne(
-          { _id: claseExists._id }, 
-          clase
-        )
+      const clase = {
+        nombre: nombre.toUpperCase(),
+        profesor: profesor.toUpperCase(),
+        año,
+        faltas,
+      };
+
+      if (_id === "") {
+        const response = await clasesModel.create(clase);
+
         return res.json({
-          status: 201,
-          message: "Clase modificada con éxito"
-        })
+          status: 200,
+          message: "Clase ingresada correctamente",
+          response,
+        });
       }
 
-      const response = await clasesModel.create(clase);
-
-      return res.json({
-        status: 200,
-        message: "Clase ingresada correctamente",
-        response,
+      const claseExists = await clasesModel.findOne({
+        _id,
       });
+
+      if (claseExists) {
+        console.log("llego al modificador");
+        const claseModificada = await clasesModel.updateOne(
+          { _id: claseExists._id },
+          clase
+        );
+        return res.json({
+          status: 201,
+          message: "Clase modificada con éxito",
+        });
+      }
     } catch (error) {
       return res.json({
         message: "Error",
@@ -283,32 +300,36 @@ router.delete(
   }
 );
 
-//Eliminar una clase 
+//Eliminar una clase
 
-router.delete("/clase/:id",   passportCall("jwt"),
+router.delete(
+  "/clase/:id",
+  passportCall("jwt"),
   authorization("admin"),
   async (req, res) => {
-    try{
+    try {
       const { id } = req.params;
 
       const clase = await clasesModel.findByIdAndDelete(id);
-      if(!clase){
+      if (!clase) {
         return res.json({
-          status: 404, 
-          message: "No se encontró la clase"
-        })
+          status: 404,
+          message: "No se encontró la clase",
+        });
       }
-      return res.json({
-        status: 200, 
-        message: "Clase eliminada"
-      })
 
-    }catch(error){
+      await materialModel.deleteMany({ clase: clase.nombre, año: clase.año })
+      return res.json({
+        status: 200,
+        message: "Clase eliminada",
+      });
+    } catch (error) {
       return res.json({
         message: "Error",
         error,
       });
     }
-  })
+  }
+);
 
 export default router;

@@ -84,15 +84,22 @@ Errores:
 
 Final:
 => Chequear todos los Swal para el manejo de errores
-=> agregar , { withCredentials: true } a las rutas de front
+=> agregar , { withCredentials: true } a las rutas de front (no)
 => Borrar logs
-=> Cambiar los "error" en las rutas de los catch por "error del servidor"
-=> Ver mayúsculas y minúsculas y espacios cuando agrego a un alumno a la clase
+=> Cambiar los "error" en las rutas de los catch por "error del servidor" ✓
+=> Ver mayúsculas y minúsculas y espacios cuando agrego a un alumno a la clase (registro en lower, login en lower, cambio contraseña en lower, registrar alumno upper, cargar alumno upper, cargar clase upper, email recuperar contraseña lower) ✓
 => en cambiar contraseña puedo poner cualquier mail y lo toma como correcto
 => Se traba al registrarse si se edita el mail ✓
 => foto de perfil de alumnos?
 => el cartel de asistencias registradas correctamente dura muy poco
-=> las notas no se borran luego de cargarlas
-=> no anda el registro en el deploy
+=> no anda el registro en el deploy ✓
 => volver a cambiar el mail de admin 2
-=> fijarse que passportcall y auth no hayan quedado comentados en ninguna ruta
+=> fijarse que passportcall y auth no hayan quedado comentados en ninguna ruta ✓
+=>Borrar todo de la base de datos de producción ✓
+=> largo del container de mensaje bienvenida alumno 
+=> si se elimina un alumno, eliminar sus notas, asistencias, certificados, tps, pagos, usuario ✓
+=> si se elimina una clase, eliminar el material ✓
+=> si modifico una clase y le cambio el nombre la genera como nueva ✓
+=> las notas no se borran luego de cargarlas
+=> si ya se mando una nota, cambiar el boton enviar por editar y hacer un put (igual que en pagos)
+=> modificar los pick de fechas ✓
