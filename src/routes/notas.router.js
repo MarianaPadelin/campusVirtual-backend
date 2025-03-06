@@ -44,6 +44,45 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+
+
+// //Ver las notas por clase y año
+
+// router.get(
+//   "/notasporclase/:clase/:year",
+//   // passportCall("jwt"),
+//   // authorization("admin"),
+//   async (req, res) => {
+//     try {
+//       const { clase, year } = req.params;
+//       // const alumno = await alumnosModel.findOne({ _id: id }).populate("notas");
+//       // if (!alumno) {
+//       //   return res.json({ status: 404, message: `Alumno no encontrado` });
+//       // }
+
+//       // const result = alumno.notas.filter((nota) => nota.año == year && nota.clase === clase);
+//       const result = await notasModel.find({ clase, año: year }).populate("id_alumno")
+//       if(result.length > 0){
+//         return res.json({
+//           status: 200,
+//           result,
+//         });
+//       }
+//       else return res.json({
+//         status: 404,
+//         message: "No se encontraron notas"
+//       })
+      
+//     } catch (error) {
+//       return res.json({
+//         status: 500,
+//         message: "Error",
+//         error,
+//       });
+//     }
+//   }
+// );
+
 //Poner notas a un alumno
 router.post(
   "/",

@@ -94,15 +94,20 @@ router.get(
 //muestra todos los alumnos de la clase seleccionada
 router.get(
   "/admin/:nombreClase/:year",
-  passportCall("jwt"),
-  authorization("admin"),
+  // passportCall("jwt"),
+  // authorization("admin"),
   async (req, res) => {
     try {
       const { nombreClase, year } = req.params;
 
       const clase = await clasesModel
         .findOne({ nombre: nombreClase, año: year })
-        .populate("alumnos");
+        .populate({
+          path: "alumnos",
+          populate: {
+            path: "notas", // This will populate "notas" inside "alumnos"
+          },
+        });
 
       if (!clase) {
         return res.json({

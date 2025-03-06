@@ -8,8 +8,7 @@ import { certificadoModel } from "../../models/certificados.model.js";
 
 const router = Router();
 
-//Ver todo el array de archivos de una clase y un año
-//ver permisos para que el alumno solo lo pueda ver si está anotado en esa clase
+
 router.get(
   "/:nombreClase/:year",
   passportCall("jwt"),

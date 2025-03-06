@@ -103,3 +103,6 @@ Final:
 => las notas no se borran luego de cargarlas
 => si ya se mando una nota, cambiar el boton enviar por editar y hacer un put (igual que en pagos)
 => modificar los pick de fechas ✓
+=> error del servidor en material didactico alumnos ✓
+=> no registra los presentes hasta que no tiene un ausente 
+=> si voy para atras desde el link de la pag del circo me muestra el cartel de unauthorized

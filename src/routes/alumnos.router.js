@@ -9,6 +9,7 @@ import { tpModel } from "../../models/tp.model.js";
 
 const router = Router();
 
+//Ver una lista de todos los alumnos
 router.get(
   "/",
   passportCall("jwt"),
@@ -16,7 +17,10 @@ router.get(
   async (req, res) => {
     try {
       const alumnos = await alumnosModel.find().sort({ apellido: 1 });
-      return res.json(alumnos);
+      return res.json({
+        status: 200,
+        alumnos,
+      });
     } catch (error) {
       return res.json({
         message: "Error",
@@ -117,6 +121,7 @@ router.get(
   }
 );
 
+
 //Ver las asistencias de un alumno, agrupadas por clase
 router.get(
   "/:id/asistencias/:year",
@@ -214,8 +219,6 @@ router.post(
 );
 
 //Editar los datos de un alumno
-//put reemplaza todo el registro, patch solamente una propiedad
-
 router.put(
   "/:id",
   passportCall("jwt"),

@@ -10,8 +10,6 @@ const clasesSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: "alumnos",
     },
-    //asistencias tendria que estar dentro de alumnos
-    //notas tambien
   ],
   asistencias: [
     {
