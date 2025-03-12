@@ -20,8 +20,8 @@ router.post("/register", async (req, res) => {
     const { email, password } = req.body;
     const datosRegistro = {
       email: email.toLowerCase(),
-      password
-    }
+      password,
+    };
     const userExists = await userModel.findOne({ email: datosRegistro.email });
     if (userExists) {
       return res.json({
@@ -31,15 +31,20 @@ router.post("/register", async (req, res) => {
     }
     const esAlumno = await alumnosModel.findOne({ email: datosRegistro.email });
     const esAdmin = config.adminMail;
-    const esAdmin2 = config.adminMail2; 
-    if (!esAlumno && datosRegistro.email !== esAdmin &&  datosRegistro.email !== esAdmin2) {
-
+    const esAdmin2 = config.adminMail2;
+    const esAdmin3 = config.adminMail3; 
+    if (
+      !esAlumno &&
+      datosRegistro.email !== esAdmin &&
+      datosRegistro.email !== esAdmin2 &&
+      datosRegistro.email !== esAdmin3
+    ) {
       return res.json({
         status: 500,
         message: "Este email no está registrado",
       });
     }
-    if (datosRegistro.email === esAdmin || datosRegistro.email === esAdmin2) {
+    if (datosRegistro.email === esAdmin || datosRegistro.email === esAdmin2 || datosRegistro.email === esAdmin3) {
       const user = {
         email: datosRegistro.email,
         password: createHash(password),
@@ -47,26 +52,24 @@ router.post("/register", async (req, res) => {
       };
       const result = await userModel.create(user);
       sendEmail(datosRegistro.email);
-     return res.json({
+      return res.json({
         status: 200,
         message: "Usuario creado correctamente",
         result,
       });
     } else {
       const user = {
-        email:datosRegistro.email,
+        email: datosRegistro.email,
         password: createHash(password),
       };
       const result = await userModel.create(user);
       sendEmail(datosRegistro.email);
-     return  res.json({
+      return res.json({
         status: 200,
         message: "Usuario creado correctamente",
         result,
       });
     }
-
-    
   } catch (error) {
     return res.json({
       message: "Error",
@@ -81,8 +84,8 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const datosLogin = {
       email: email.toLowerCase(),
-      password
-    }
+      password,
+    };
     //validación: El email tiene que estar en la db de alumnos pero no en la de usuarios
     const userExists = await userModel.findOne({ email: datosLogin.email });
     if (!userExists) {
@@ -109,7 +112,7 @@ router.post("/login", async (req, res) => {
       role: userExists.role,
     };
     // console.log(tokenUser);
-    const access_token = generateJWToken(tokenUser); 
+    const access_token = generateJWToken(tokenUser);
     console.log(tokenUser);
 
     res.cookie("jwtCookieToken", access_token, {
@@ -120,7 +123,11 @@ router.post("/login", async (req, res) => {
       maxAge: 2 * 60 * 60 * 1000, // 2 hours
     });
 
-    if (datosLogin.email === config.adminMail || datosLogin.email === config.adminMail2) {
+    if (
+      datosLogin.email === config.adminMail ||
+      datosLogin.email === config.adminMail2 ||
+      datosLogin.email === config.adminMail3
+    ) {
       return res.json({
         status: 201,
         tokenUser,
@@ -148,8 +155,8 @@ router.put("/resetPassword", async (req, res) => {
     const { email, password } = req.body;
     const datosReset = {
       email: email.toLowerCase(),
-      password
-    }
+      password,
+    };
     const { token } = req.params;
     const userExists = await userModel.findOne({ email: datosReset.email });
     if (!userExists) {
@@ -159,7 +166,12 @@ router.put("/resetPassword", async (req, res) => {
       });
     }
     const esAlumno = await alumnosModel.findOne({ email: datosReset.email });
-    if (!esAlumno && datosReset.email !== config.adminMail && datosReset.email !== config.adminMail2) {
+    if (
+      !esAlumno &&
+      datosReset.email !== config.adminMail &&
+      datosReset.email !== config.adminMail2 &&
+      datosReset.email !== config.adminMail3
+    ) {
       return res.json({
         status: 500,
         message: "Este email no está registrado como un alumno de la escuela",

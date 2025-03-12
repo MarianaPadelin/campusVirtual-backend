@@ -94,8 +94,8 @@ router.get(
 //muestra todos los alumnos de la clase seleccionada
 router.get(
   "/admin/:nombreClase/:year",
-  // passportCall("jwt"),
-  // authorization("admin"),
+  passportCall("jwt"),
+  authorization("admin"),
   async (req, res) => {
     try {
       const { nombreClase, year } = req.params;
@@ -104,6 +104,7 @@ router.get(
         .findOne({ nombre: nombreClase, año: year })
         .populate({
           path: "alumnos",
+          options: { sort: { apellido: 1 }},
           populate: {
             path: "notas", // This will populate "notas" inside "alumnos"
           },
@@ -127,7 +128,7 @@ router.get(
 
       return res.json({
         status: 200,
-        result,
+        result 
       });
     } catch (error) {
       return res.json({

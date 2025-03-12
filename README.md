@@ -100,9 +100,13 @@ Final:
 => si se elimina un alumno, eliminar sus notas, asistencias, certificados, tps, pagos, usuario ✓
 => si se elimina una clase, eliminar el material ✓
 => si modifico una clase y le cambio el nombre la genera como nueva ✓
-=> las notas no se borran luego de cargarlas
-=> si ya se mando una nota, cambiar el boton enviar por editar y hacer un put (igual que en pagos)
+=> las notas no se borran luego de cargarlas ✓
+=> si ya se mando una nota, cambiar el boton enviar por editar y hacer un put (igual que en pagos) ✓
 => modificar los pick de fechas ✓
 => error del servidor en material didactico alumnos ✓
-=> no registra los presentes hasta que no tiene un ausente 
-=> si voy para atras desde el link de la pag del circo me muestra el cartel de unauthorized
+=> no registra los presentes hasta que no tiene un ausente ✓
+=> si voy para atras desde el link de la pag del circo me muestra el cartel de unauthorized ✓
+=> si no pongo nada en el casillero de notas se guarda la ultima nota del otro alumno ✓
+=> boton eliminar notas ✓
+=> ordenar notas por apellido del alumno ✓
+=> si elimino un alumno me aparece el estado de no hay ningun alumno 

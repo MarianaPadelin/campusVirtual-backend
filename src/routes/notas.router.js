@@ -3,13 +3,11 @@ import { notasModel } from "../../models/notas.model.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
 import { authorization, passportCall } from "../utils/utils.js";
 
-
 const router = Router();
 
 //Get all
 router.get("/", async (req, res) => {
   try {
-
     const notas = await notasModel.find();
     return res.json(notas);
   } catch (error) {
@@ -44,45 +42,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
-
-// //Ver las notas por clase y año
-
-// router.get(
-//   "/notasporclase/:clase/:year",
-//   // passportCall("jwt"),
-//   // authorization("admin"),
-//   async (req, res) => {
-//     try {
-//       const { clase, year } = req.params;
-//       // const alumno = await alumnosModel.findOne({ _id: id }).populate("notas");
-//       // if (!alumno) {
-//       //   return res.json({ status: 404, message: `Alumno no encontrado` });
-//       // }
-
-//       // const result = alumno.notas.filter((nota) => nota.año == year && nota.clase === clase);
-//       const result = await notasModel.find({ clase, año: year }).populate("id_alumno")
-//       if(result.length > 0){
-//         return res.json({
-//           status: 200,
-//           result,
-//         });
-//       }
-//       else return res.json({
-//         status: 404,
-//         message: "No se encontraron notas"
-//       })
-      
-//     } catch (error) {
-//       return res.json({
-//         status: 500,
-//         message: "Error",
-//         error,
-//       });
-//     }
-//   }
-// );
-
 //Poner notas a un alumno
 router.post(
   "/",
@@ -90,6 +49,7 @@ router.post(
   authorization("admin"),
   async (req, res) => {
     try {
+      //si ya existe la nota (ej: la de julio) modificar la existente
       const nota = req.body;
       const response = await notasModel.create(nota);
       const alumno = await alumnosModel.findById(response.id_alumno);
@@ -99,7 +59,7 @@ router.post(
         alumno
       );
 
-      res.json({
+      return res.json({
         status: 200,
         message: "Nota ingresada correctamente",
         response,
@@ -156,21 +116,47 @@ router.put(
 
 //Borrar una nota
 router.delete(
-  "/:id",
+  "/:id/:id_alumno",
   passportCall("jwt"),
   authorization("admin"),
   async (req, res) => {
     try {
-      const { id } = req.params;
-      const nota = await notasModel.findByIdAndDelete({ _id: id });
+      const { id, id_alumno } = req.params;
+      const nota = await notasModel.findByIdAndDelete(id);
 
       if (!nota) {
-        return res.json({ message: `Nota no encontrada` });
+        return res.json({
+          status: 404,
+          message: `Nota no encontrada`,
+        });
       }
+      const alumno = await alumnosModel.findById(id_alumno).populate("notas");
+
+      if (!alumno) {
+        return res.json({
+          status: 404,
+          message: `Alumno no encontrado`,
+        });
+      }
+
+      alumno.notas = alumno.notas.filter((n) => n._id.toString() !== id);
+      const notasRepetidas = alumno.notas.filter(
+        (notaRepetida) =>
+          notaRepetida.clase === nota.clase && notaRepetida.año == nota.año
+      );
+
+      if (notasRepetidas.length > 0) {
+        for (const notaRepetida of notasRepetidas) {
+          await notasModel.deleteOne({ _id: notaRepetida._id });
+          alumno.notas = alumno.notas.filter(
+            (n) => n._id.toString() !== notaRepetida._id.toString()
+          );
+        }
+      }
+      await alumno.save();
       return res.json({
         status: 200,
         message: `Nota eliminada`,
-        nota,
       });
     } catch (error) {
       return res.json({
@@ -180,7 +166,5 @@ router.delete(
     }
   }
 );
-
-
 
 export default router;

@@ -137,7 +137,7 @@ router.get(
         return res.json({ status: 404, message: `Alumno no encontrado` });
       }
       //encontrar las clases en las que participa el alumno
-      const clasesQueToma = await clasesModel.find({ alumnos: id });
+      const clasesQueToma = await clasesModel.find({ alumnos: id, año: year });
 
       //array de asistencias del alumno con su id, clase y fecha
       const asistenciasPorAnio = alumno.asistencias.filter((a) =>
@@ -152,8 +152,9 @@ router.get(
         };
       });
 
-      if (asistenciasPorAnio.length === 0) {
-        //si no hay asistencias en ese año
+
+      if (clasesQueToma.length === 0) {
+        //si no hay clases en ese año
         return res.json({
           status: 200,
           asistenciasPorClase: [],

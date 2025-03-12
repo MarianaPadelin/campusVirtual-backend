@@ -22,6 +22,7 @@ export default {
   privateKey: process.env.PRIVATE_KEY,
   adminMail: process.env.ADMIN_MAIL,
   adminMail2: process.env.ADMIN_MAIL_2,
+  adminMail3: process.env.ADMIN_MAIL_3,
   //   adminPass: process.env.ADMIN_PASSWORD,
   //   clientID: process.env.clientID,
   //   clientSecret: process.env.clientSecret,
