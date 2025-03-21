@@ -109,4 +109,7 @@ Final:
 => si no pongo nada en el casillero de notas se guarda la ultima nota del otro alumno ✓
 => boton eliminar notas ✓
 => ordenar notas por apellido del alumno ✓
-=> si elimino un alumno me aparece el estado de no hay ningun alumno 
+=> si elimino un alumno me aparece el estado de no hay ningun alumno ✓
+
+=> registrando alumno, registrando asistencias, cargando certificado
+ se cierra la sesión

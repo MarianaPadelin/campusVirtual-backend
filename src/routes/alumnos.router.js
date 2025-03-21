@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { alumnosModel } from "../../models/alumnos.model.js";
-import { authorization, passportCall } from "../utils/utils.js";
+import { authMiddleware, authorization } from "../utils/utils.js";
 import { clasesModel } from "../../models/clases.model.js";
 import { userModel } from "../../models/user.model.js";
 import { notasModel } from "../../models/notas.model.js";
@@ -9,32 +9,38 @@ import { tpModel } from "../../models/tp.model.js";
 
 const router = Router();
 
+router.get("/test-session", (req, res) => {
+  console.log("Session ID:", req.sessionID);
+  console.log("Session Data:", req.session);
+  if (!req.session.user) {
+  return res.status(401).json({ message: "Session expired or not found" });
+}
+
+res.json({ session: req.session });});
+
+
+
 //Ver una lista de todos los alumnos
-router.get(
-  "/",
-  passportCall("jwt"),
-  authorization("admin"),
-  async (req, res) => {
-    try {
-      const alumnos = await alumnosModel.find().sort({ apellido: 1 });
-      return res.json({
-        status: 200,
-        alumnos,
-      });
-    } catch (error) {
-      return res.json({
-        message: "Error",
-        error,
-      });
-    }
+router.get("/", authMiddleware, authorization("admin"), async (req, res) => {
+  try {
+    const alumnos = await alumnosModel.find().sort({ apellido: 1 });
+    return res.json({
+      status: 200,
+      alumnos,
+    });
+  } catch (error) {
+    return res.json({
+      message: "Error",
+      error,
+    });
   }
-);
+});
 
 //Encontrar un alumno por id
 
 router.get(
   "/getById/:id",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   async (req, res) => {
     try {
@@ -65,7 +71,7 @@ router.get(
 
 router.get(
   "/getByEmail/:email",
-  passportCall("jwt"),
+  authMiddleware,
   authorization(["admin", "alumno"]),
   async (req, res) => {
     try {
@@ -96,7 +102,7 @@ router.get(
 
 router.get(
   "/:id/notas/:year",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("alumno"),
   async (req, res) => {
     try {
@@ -121,11 +127,10 @@ router.get(
   }
 );
 
-
 //Ver las asistencias de un alumno, agrupadas por clase
 router.get(
   "/:id/asistencias/:year",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("alumno"),
   async (req, res) => {
     try {
@@ -151,7 +156,6 @@ router.get(
           totalFaltas: clase.faltas, // Get the total allowed absences from class
         };
       });
-
 
       if (clasesQueToma.length === 0) {
         //si no hay clases en ese año
@@ -190,106 +194,96 @@ router.get(
 );
 
 //Registrar a un nuevo alumno
-router.post(
-  "/",
-  passportCall("jwt"),
-  authorization("admin"),
-  async (req, res) => {
-    try {
-      const { nombre, apellido, email, celular } = req.body;
+router.post("/", authMiddleware, authorization("admin"), async (req, res) => {
+  try {
+    const { nombre, apellido, email, celular } = req.body;
 
-      const alumno = {
-        nombre: nombre.toUpperCase(),
-        apellido: apellido.toUpperCase(),
-        email: email.toLowerCase(),
-        celular,
-      };
-      const response = await alumnosModel.create(alumno);
-      return res.json({
-        status: 200,
-        message: "Alumno ingresado correctamente",
-        response,
-      });
-    } catch (error) {
-      return res.json({
-        message: "El email ya existe en la base de datos",
-        error,
-      });
-    }
+    const alumno = {
+      nombre: nombre.toUpperCase(),
+      apellido: apellido.toUpperCase(),
+      email: email.toLowerCase(),
+      celular,
+    };
+    const response = await alumnosModel.create(alumno);
+    return res.json({
+      status: 200,
+      message: "Alumno ingresado correctamente",
+      response,
+    });
+  } catch (error) {
+    return res.json({
+      message: "El email ya existe en la base de datos",
+      error,
+    });
   }
-);
+});
 
 //Editar los datos de un alumno
-router.put(
-  "/:id",
-  passportCall("jwt"),
-  authorization("admin"),
-  async (req, res) => {
-    try {
-      const { id } = req.params;
+router.put("/:id", authMiddleware, authorization("admin"), async (req, res) => {
+  try {
+    const { id } = req.params;
 
-      const alumno = await alumnosModel.findOne({ _id: id });
-      console.log(alumno);
-      if (!alumno) {
-        return res.json({ message: `Alumno no encontrado` });
-      }
+    const alumno = await alumnosModel.findOne({ _id: id });
+    console.log(alumno);
+    if (!alumno) {
+      return res.json({ message: `Alumno no encontrado` });
+    }
 
-      const { nombre, apellido, email, celular } = req.body;
-      const alumnoActualizado = {
-        nombre: nombre.toUpperCase(),
-        apellido: apellido.toUpperCase(),
-        email: email.toLowerCase(),
-        celular,
-      };
-      console.log(
-        "comparativa de mails: ",
-        alumnoActualizado.email,
-        alumno.email
-      );
+    const { nombre, apellido, email, celular } = req.body;
+    const alumnoActualizado = {
+      nombre: nombre.toUpperCase(),
+      apellido: apellido.toUpperCase(),
+      email: email.toLowerCase(),
+      celular,
+    };
+    console.log(
+      "comparativa de mails: ",
+      alumnoActualizado.email,
+      alumno.email
+    );
 
-      const response = await alumnosModel.updateOne(
-        { _id: id },
-        alumnoActualizado
-      );
-      if (response.modifiedCount == 0) {
-        return res.json({
-          message: "No se pudieron actualizar los datos",
-        });
-      }
-
-      //si se modifica el email, eliminar el usuario con el email viejo
-      if (alumnoActualizado.email !== alumno.email) {
-        const usuario = await userModel.findOneAndDelete({
-          email: alumno.email,
-        });
-        console.log(usuario);
-        if (!usuario) {
-          return res.json({
-            status: 200,
-            message: `Alumno actualizado`,
-            response,
-          });
-        }
-      }
-
+    const response = await alumnosModel.updateOne(
+      { _id: id },
+      alumnoActualizado
+    );
+    if (response.modifiedCount == 0) {
       return res.json({
-        status: 200,
-        message: `Alumno actualizado`,
-        response,
-      });
-    } catch (error) {
-      return res.json({
-        message: "Error",
-        error,
+        message: "No se pudieron actualizar los datos",
       });
     }
+
+    //si se modifica el email, eliminar el usuario con el email viejo
+    if (alumnoActualizado.email !== alumno.email) {
+      const usuario = await userModel.findOneAndDelete({
+        email: alumno.email,
+      });
+      console.log(usuario);
+      if (!usuario) {
+        return res.json({
+          status: 200,
+          message: `Alumno actualizado`,
+          response,
+        });
+      }
+    }
+
+    return res.json({
+      status: 200,
+      message: `Alumno actualizado`,
+      response,
+    });
+  } catch (error) {
+    return res.json({
+      message: "Error",
+      error,
+    });
   }
-);
+});
 
 //ELiminar a un alumno de la DB
 router.delete(
   "/:id",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   async (req, res) => {
     try {

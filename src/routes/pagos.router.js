@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { pagosModel } from "../../models/pagos.model.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
-import { authorization, passportCall } from "../utils/utils.js";
+import { authorization, authMiddleware } from "../utils/utils.js";
 import { sendComprobante } from "./email.router.js";
 
 const router = Router();
@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
 
 router.get(
   "/mes/:month/:year",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   async (req, res) => {
     try {
@@ -66,7 +66,7 @@ router.get(
 
 router.get(
   "/:id",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("alumno"),
   async (req, res) => {
     try {
@@ -88,85 +88,75 @@ router.get(
 );
 
 //Cargar pagos
-router.post(
-  "/",
-  passportCall("jwt"),
-  authorization("admin"),
-  async (req, res) => {
-    try {
-      const pago = req.body;
-      const { id_alumno, fecha, monto } = pago;
-      const response = await pagosModel.create(pago);
+router.post("/", authMiddleware, authorization("admin"), async (req, res) => {
+  try {
+    const pago = req.body;
+    const { id_alumno, fecha, monto } = pago;
+    const response = await pagosModel.create(pago);
 
-      const alumno = await alumnosModel.findById(id_alumno);
-      alumno.pagos.push(response._id);
-      const update = await alumnosModel.findByIdAndUpdate(
-        { _id: alumno._id },
-        alumno
-      );
-      const email = alumno.email;
+    const alumno = await alumnosModel.findById(id_alumno);
+    alumno.pagos.push(response._id);
+    const update = await alumnosModel.findByIdAndUpdate(
+      { _id: alumno._id },
+      alumno
+    );
+    const email = alumno.email;
 
-      //envío email con comprobante
-      sendComprobante(email, fecha, monto);
-      res.json({
-        status: 200,
-        Message: "Pago ingresado correctamente",
-        response,
-      });
-    } catch (error) {
-      return res.json({
-        message: "Error",
-        error,
-      });
-    }
+    //envío email con comprobante
+    sendComprobante(email, fecha, monto);
+    res.json({
+      status: 200,
+      Message: "Pago ingresado correctamente",
+      response,
+    });
+  } catch (error) {
+    return res.json({
+      message: "Error",
+      error,
+    });
   }
-);
+});
 
 //Editar un pago
-router.put(
-  "/:id",
-  passportCall("jwt"),
-  authorization("admin"),
-  async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { monto } = req.body;
-      const pago = await pagosModel.findById(id);
-      if (!pago) {
-        return res.json({
-          status: 404,
-          message: "No se encontró el pago",
-        });
-      }
-      const pagoActualizado = await pagosModel.findByIdAndUpdate(
-        id,
-        { $set: { monto: monto } },
-        // { new: true } // This returns the updated document
-      );
-
-      if (!pagoActualizado) {
-        return res.json({
-          status: 500,
-          message: "Error actualizando el pago",
-        });
-      }
+router.put("/:id", authMiddleware, authorization("admin"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { monto } = req.body;
+    const pago = await pagosModel.findById(id);
+    if (!pago) {
       return res.json({
-        status: 200,
-        message: "Pago actualizado con éxito",
-      });
-    } catch (error) {
-      return res.json({
-        message: "Error",
-        error,
+        status: 404,
+        message: "No se encontró el pago",
       });
     }
+    const pagoActualizado = await pagosModel.findByIdAndUpdate(
+      id,
+      { $set: { monto: monto } }
+      // { new: true } // This returns the updated document
+    );
+
+    if (!pagoActualizado) {
+      return res.json({
+        status: 500,
+        message: "Error actualizando el pago",
+      });
+    }
+    return res.json({
+      status: 200,
+      message: "Pago actualizado con éxito",
+    });
+  } catch (error) {
+    return res.json({
+      message: "Error",
+      error,
+    });
   }
-);
+});
 
 //Eliminar un pago
 router.delete(
   "/:id",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   async (req, res) => {
     try {

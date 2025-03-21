@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { loader } from "../utils/loader.js";
-import { authorization, passportCall } from "../utils/utils.js";
+import { authorization, authMiddleware } from "../utils/utils.js";
 import { clasesModel } from "../../models/clases.model.js";
 import { materialModel } from "../../models/material.model.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
@@ -8,10 +8,9 @@ import { certificadoModel } from "../../models/certificados.model.js";
 
 const router = Router();
 
-
 router.get(
   "/:nombreClase/:year",
-  passportCall("jwt"),
+  authMiddleware,
   authorization(["admin", "alumno"]),
   async (req, res) => {
     try {
@@ -52,16 +51,16 @@ router.get(
 //El alumno ve su certificado por año
 router.get(
   "/certificado/:id/:year",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("alumno"),
   async (req, res) => {
     try {
       const { id, year } = req.params;
-      const certificados = await certificadoModel.find({ id_alumno: id })
-      console.log("certificados: ", certificados)
-      const certActual =  certificados.filter((c) => c.fecha.includes(year))[0]
-      console.log("cert actual: ", certActual)
-      
+      const certificados = await certificadoModel.find({ id_alumno: id });
+      console.log("certificados: ", certificados);
+      const certActual = certificados.filter((c) => c.fecha.includes(year))[0];
+      console.log("cert actual: ", certActual);
+
       if (!certActual) {
         return res.json({
           status: 404,
@@ -81,11 +80,10 @@ router.get(
   }
 );
 
-
 //Subir material didáctico
 router.post(
   "/",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   loader.single("file"),
   async (req, res) => {
@@ -154,7 +152,7 @@ router.post(
 //subir certificado
 router.post(
   "/certificado",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   loader.single("file"),
   async (req, res) => {
@@ -162,7 +160,7 @@ router.post(
       const data = req.body;
       const nombreMayuscula = data.nombreAlumno.toUpperCase();
       const apellidoMayuscula = data.apellidoAlumno.toUpperCase();
-      console.log(data)
+      console.log(data);
       //data me tiene que traer nombre del alumno, apellido, fecha y año
       if (!req.file) {
         return res.json({
@@ -171,13 +169,16 @@ router.post(
         });
       }
 
-      const alumno = await alumnosModel.findOne({ nombre: nombreMayuscula, apellido: apellidoMayuscula});
-            if (!alumno) {
-              return res.json({
-                status: 404,
-                message: "No se encontró al alumno.",
-              });
-            }
+      const alumno = await alumnosModel.findOne({
+        nombre: nombreMayuscula,
+        apellido: apellidoMayuscula,
+      });
+      if (!alumno) {
+        return res.json({
+          status: 404,
+          message: "No se encontró al alumno.",
+        });
+      }
       //primero creo el archivo en su coleccion material
       const archivo = {
         nombre: req.file.originalname,
@@ -204,7 +205,6 @@ router.post(
 
       //Lo agrego al alumno:
 
-
       alumno.certificados.push(response);
 
       await alumnosModel.findByIdAndUpdate(alumno._id, alumno);
@@ -221,11 +221,9 @@ router.post(
   }
 );
 
-
-
 router.delete(
   "/:id",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   async (req, res) => {
     try {

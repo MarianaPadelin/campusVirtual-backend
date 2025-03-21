@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { loader } from "../utils/loader.js";
-import { authorization, passportCall } from "../utils/utils.js";
+import { authorization, authMiddleware } from "../utils/utils.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
 import { tpModel } from "../../models/tp.model.js";
 import { sendTpConfirmation } from "./email.router.js";
@@ -8,36 +8,31 @@ import { sendTpConfirmation } from "./email.router.js";
 const router = Router();
 
 //Ver todos los tps (admin)
-router.get(
-  "/",
-  passportCall("jwt"),
-  authorization("admin"),
-  async (req, res) => {
-    try {
-      const listaTps = await tpModel.find().populate("idAlumno").sort("fecha");
-      if (!listaTps) {
-        return res.json({
-          status: 404,
-          message: "No se encontraron trabajos prácticos",
-        });
-      }
+router.get("/", authMiddleware, authorization("admin"), async (req, res) => {
+  try {
+    const listaTps = await tpModel.find().populate("idAlumno").sort("fecha");
+    if (!listaTps) {
       return res.json({
-        status: 200,
-        listaTps,
-      });
-    } catch (error) {
-      return res.json({
-        message: "Error",
-        error,
+        status: 404,
+        message: "No se encontraron trabajos prácticos",
       });
     }
+    return res.json({
+      status: 200,
+      listaTps,
+    });
+  } catch (error) {
+    return res.json({
+      message: "Error",
+      error,
+    });
   }
-);
+});
 
 //ver los tps de un alumno por id
 router.get(
   "/:id",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("alumno"),
   async (req, res) => {
     try {
@@ -70,7 +65,7 @@ router.get(
 //subir un tp (alumno)
 router.post(
   "/",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("alumno"),
   loader.single("file"),
 
@@ -131,7 +126,7 @@ router.post(
 
 router.delete(
   "/:id",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("alumno"),
   async (req, res) => {
     try {

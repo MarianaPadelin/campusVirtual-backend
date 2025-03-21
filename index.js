@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 
 import passport from "passport";
-import inicializePassport from "./src/config/passport_config.js"; //
+// import inicializePassport from "./src/config/passport_config.js"; //
 // import { MONGO_URL } from "../config/env.js"
 
 import alumnos_router from "./src/routes/alumnos.router.js";
@@ -49,20 +49,29 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 //Configuración se sesión
+app.set("trust proxy", 1);
 app.use(
   session({
     //almaceno los datos de sesión en mongo atlas
     store: MongoStore.create({
       mongoUrl: MONGO_URL,
       // mongoOptions:{ useNewUrlParser: true, useUnifiedTopology: true},
-      ttl: 2 * 60, //la sesión dura 2 min
+      ttl: 60 * 60, //la sesión dura 2 min
     }),
+    //nuevo
+    cookie: {
+      secure: config.environment === "prod" ? true: false, // Only works on HTTPS (set to false for local dev)
+      httpOnly: true, // Prevents client-side access
+      sameSite: config.environment === "prod" ? "None": "Lax", // Allows some cross-site requests
+      maxAge: 60 * 60 * 1000,
+    }, //termina lo nuevo
     secret: secret,
     resave: false,
     //resave mantiene la sesión guardada en memoria del servidor aunque haya tiempo de inactividad, no hace falta si estoy guardando en mongo
     saveUninitialized: true,
-    //guarda la sesión aún cuando no el objeto "sesión" esté vacío
+    //guarda la sesión aún cuando el objeto "sesión" esté vacío
   })
 );
 
@@ -92,8 +101,9 @@ app.get("/", (req, res) => {
 //   console.log(`${req.method} ${req.url}`);
 //   next();
 // });
-inicializePassport(); // Initialize Passport strategies
-app.use(passport.initialize()); // Attach Passport middleware
+
+// inicializePassport(); // Initialize Passport strategies
+// app.use(passport.initialize()); // Attach Passport middleware
 app.use(cookieParser());
 
 app.use(express.static("/public"));

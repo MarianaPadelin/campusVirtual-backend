@@ -1,33 +1,28 @@
 import { Router } from "express";
 import { clasesModel } from "../../models/clases.model.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
-import { authorization, passportCall } from "../utils/utils.js";
+import { authorization, authMiddleware } from "../utils/utils.js";
 import { materialModel } from "../../models/material.model.js";
 
 //ver el SORT por apellido
 const router = Router();
 
 //Muestra una lista con los nombres de todas las clases
-router.get(
-  "/",
-  passportCall("jwt"),
-  authorization("admin"),
-  async (req, res) => {
-    try {
-      const clases = await clasesModel.find().distinct("nombre");
-      return res.json(clases);
-    } catch (error) {
-      return res.json({
-        message: "Error",
-        error,
-      });
-    }
+router.get("/", authMiddleware, authorization("admin"), async (req, res) => {
+  try {
+    const clases = await clasesModel.find().distinct("nombre");
+    return res.json(clases);
+  } catch (error) {
+    return res.json({
+      message: "Error",
+      error,
+    });
   }
-);
+});
 
 router.get(
   "/year/:year",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   async (req, res) => {
     try {
@@ -58,7 +53,7 @@ router.get(
 //Ver las clases en las que está instripto ese alumno en ese año
 router.get(
   "/alumno/:idAlumno/:year",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("alumno"),
   async (req, res) => {
     try {
@@ -94,7 +89,7 @@ router.get(
 //muestra todos los alumnos de la clase seleccionada
 router.get(
   "/admin/:nombreClase/:year",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   async (req, res) => {
     try {
@@ -104,7 +99,7 @@ router.get(
         .findOne({ nombre: nombreClase, año: year })
         .populate({
           path: "alumnos",
-          options: { sort: { apellido: 1 }},
+          options: { sort: { apellido: 1 } },
           populate: {
             path: "notas", // This will populate "notas" inside "alumnos"
           },
@@ -128,7 +123,7 @@ router.get(
 
       return res.json({
         status: 200,
-        result 
+        result,
       });
     } catch (error) {
       return res.json({
@@ -143,7 +138,7 @@ router.get(
 
 router.post(
   "/add",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   async (req, res) => {
     try {
@@ -211,59 +206,54 @@ router.post(
 );
 
 //Agregar una nueva clase, si ya existe el id, modificarla
-router.post(
-  "/",
-  passportCall("jwt"),
-  authorization("admin"),
-  async (req, res) => {
-    try {
-      const { _id, nombre, profesor, año, faltas } = req.body;
+router.post("/", authMiddleware, authorization("admin"), async (req, res) => {
+  try {
+    const { _id, nombre, profesor, año, faltas } = req.body;
 
-      const clase = {
-        nombre: nombre.toUpperCase(),
-        profesor: profesor.toUpperCase(),
-        año,
-        faltas,
-      };
+    const clase = {
+      nombre: nombre.toUpperCase(),
+      profesor: profesor.toUpperCase(),
+      año,
+      faltas,
+    };
 
-      if (_id === "") {
-        const response = await clasesModel.create(clase);
+    if (_id === "") {
+      const response = await clasesModel.create(clase);
 
-        return res.json({
-          status: 200,
-          message: "Clase ingresada correctamente",
-          response,
-        });
-      }
-
-      const claseExists = await clasesModel.findOne({
-        _id,
-      });
-
-      if (claseExists) {
-        console.log("llego al modificador");
-        const claseModificada = await clasesModel.updateOne(
-          { _id: claseExists._id },
-          clase
-        );
-        return res.json({
-          status: 201,
-          message: "Clase modificada con éxito",
-        });
-      }
-    } catch (error) {
       return res.json({
-        message: "Error",
-        error,
+        status: 200,
+        message: "Clase ingresada correctamente",
+        response,
       });
     }
+
+    const claseExists = await clasesModel.findOne({
+      _id,
+    });
+
+    if (claseExists) {
+      console.log("llego al modificador");
+      const claseModificada = await clasesModel.updateOne(
+        { _id: claseExists._id },
+        clase
+      );
+      return res.json({
+        status: 201,
+        message: "Clase modificada con éxito",
+      });
+    }
+  } catch (error) {
+    return res.json({
+      message: "Error",
+      error,
+    });
   }
-);
+});
 
 // Eliminar a un alumno de una clase
 router.delete(
   "/:nombreClase/:year/:id",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   async (req, res) => {
     try {
@@ -310,7 +300,7 @@ router.delete(
 
 router.delete(
   "/clase/:id",
-  passportCall("jwt"),
+  authMiddleware,
   authorization("admin"),
   async (req, res) => {
     try {
@@ -324,7 +314,7 @@ router.delete(
         });
       }
 
-      await materialModel.deleteMany({ clase: clase.nombre, año: clase.año })
+      await materialModel.deleteMany({ clase: clase.nombre, año: clase.año });
       return res.json({
         status: 200,
         message: "Clase eliminada",
