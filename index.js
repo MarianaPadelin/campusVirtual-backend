@@ -4,7 +4,7 @@ import express from "express";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 
-import passport from "passport";
+// import passport from "passport";
 // import inicializePassport from "./src/config/passport_config.js"; //
 // import { MONGO_URL } from "../config/env.js"
 
@@ -58,19 +58,21 @@ app.use(
     store: MongoStore.create({
       mongoUrl: MONGO_URL,
       // mongoOptions:{ useNewUrlParser: true, useUnifiedTopology: true},
-      ttl: 60 * 60, //la sesión dura 2 min
+      ttl: 60 * 60, 
     }),
     //nuevo
     cookie: {
-      secure: config.environment === "prod" ? true: false, // Only works on HTTPS (set to false for local dev)
+      secure: true,
+      // secure: config.environment === "prod" ? true: false, // Only works on HTTPS (set to false for local dev)
       httpOnly: true, // Prevents client-side access
-      sameSite: config.environment === "prod" ? "None": "Lax", // Allows some cross-site requests
+      // sameSite: config.environment === "prod" ? "None": "Lax", // Allows some cross-site requests
+      sameSite: "none",
       maxAge: 60 * 60 * 1000,
     }, //termina lo nuevo
     secret: secret,
     resave: false,
     //resave mantiene la sesión guardada en memoria del servidor aunque haya tiempo de inactividad, no hace falta si estoy guardando en mongo
-    saveUninitialized: true,
+    saveUninitialized: false,
     //guarda la sesión aún cuando el objeto "sesión" esté vacío
   })
 );
