@@ -281,8 +281,10 @@ router.get("/logout", (req, res) => {
       res.clearCookie("connect.sid", {
         path: "/",
         httpOnly: true,
-        secure: config.environment === "prod" ? true: false,
-        sameSite: config.environment === "prod" ? "None": "Lax", // Allows some cross-site requests
+        secure: true,
+        // secure: config.environment === "prod" ? true: false,
+        sameSite: "none"
+        // sameSite: config.environment === "prod" ? "None": "Lax", // Allows some cross-site requests
       });
       console.log("sesión cerrada")
       return res.json({
