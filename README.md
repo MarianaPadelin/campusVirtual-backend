@@ -111,5 +111,9 @@ Final:
 => ordenar notas por apellido del alumno ✓
 => si elimino un alumno me aparece el estado de no hay ningun alumno ✓
 
-=> registrando alumno, registrando asistencias, cargando certificado
- se cierra la sesión
+=> tamaño de archivos en cloudinary
+=> párrafo descriptivo en el material subido ✓
+=> subir links en cargar material y en tp ✓
+=> borrar el material en cloudinary cuando se elimina un archivo? 
+
+=> cambiar lo de secure y sameSite

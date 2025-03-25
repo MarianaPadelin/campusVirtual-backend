@@ -5,6 +5,7 @@ const materialSchema = new Schema({
     fecha: String,
     url: String,
     clase: String,
+    description: String,
     año: Number,
 })
 

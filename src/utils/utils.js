@@ -54,7 +54,7 @@ export const isValidPassword = (user, password) => {
 //NUEVO
 // 🔹 Middleware de autenticación basado en sesiones
 export const authMiddleware = (req, res, next) => {
-  console.log("🔍 Session on AuthMiddleware:", req.session);
+  // console.log("🔍 Session on AuthMiddleware:", req.session);
 
   if (!req.session.user) {
     console.log("❌ No session found, user must log in again.");
@@ -65,7 +65,6 @@ export const authMiddleware = (req, res, next) => {
   }
   
   req.user = req.session.user;
-  console.log("middleware: ", req.user)
   next(); // Usuario autenticado, continuar con la solicitud
 };
 

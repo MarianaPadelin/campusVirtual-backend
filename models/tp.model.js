@@ -6,6 +6,7 @@ const tpSchema = new Schema({
   url: String,
   clase: String,
   idAlumno: { type: Schema.Types.ObjectId, ref: "alumnos" },
+  año: Number
 });
 
 const tpModel = model("tps", tpSchema);

@@ -4,6 +4,7 @@ import { authorization, authMiddleware } from "../utils/utils.js";
 import { alumnosModel } from "../../models/alumnos.model.js";
 import { tpModel } from "../../models/tp.model.js";
 import { sendTpConfirmation } from "./email.router.js";
+import { clasesModel } from "../../models/clases.model.js";
 
 const router = Router();
 
@@ -87,7 +88,19 @@ router.post(
         fecha: data.fecha,
         clase: data.clase,
         url: req.file.path,
+        año: data.anio,
       };
+      console.log("clase: ", data.clase, "año: ", data.anio)
+      const clase = await clasesModel.findOne({
+        nombre: data.clase,
+        año: data.anio,
+      });
+      if (!clase) {
+        return res.json({
+          status: 404,
+          message: "No se encontró la clase.",
+        });
+      }
 
       const response = await tpModel.create(tp);
       const alumno = await alumnosModel.findById({ _id: data.idAlumno });
@@ -106,10 +119,84 @@ router.post(
         alumno.email,
         data.fecha,
         req.file.originalname,
-        data.clase
+        data.clase,
+        data.anio
       );
 
-      res.json({
+      return res.json({
+        status: 200,
+        message: "Archivo cargado correctamente.",
+        tp,
+      });
+    } catch (error) {
+      return res.json({
+        status: 500,
+        message: "Error",
+        error,
+      });
+    }
+  }
+);
+
+//subir un tp (alumno, desde LINK)
+router.post(
+  "/link",
+  authMiddleware,
+  authorization("alumno"),
+
+  async (req, res) => {
+    try {
+      const data = req.body;
+      console.log(data);
+
+      const tp = {
+        idAlumno: data.idAlumno,
+        nombre: data.title,
+        fecha: data.fecha,
+        clase: data.clase,
+        url: data.link,
+        año: data.anio,
+      };
+
+     if (!data.link){
+       return res.json({
+         status: 404,
+         message: "Debe poner un link",
+       });
+     }
+
+      const clase = await clasesModel.findOne({
+        nombre: data.clase,
+        año: data.anio,
+      });
+      if (!clase) {
+        return res.json({
+          status: 404,
+          message: "No se encontró la clase.",
+        });
+      }
+      const response = await tpModel.create(tp);
+      const alumno = await alumnosModel.findById({ _id: data.idAlumno });
+      if (!alumno) {
+        console.log("llego a no hay alumno")
+        return res.json({
+          status: 404,
+          message: "No se encontró el alumno.",
+        });
+      }
+      alumno.tps.push(response);
+      await alumnosModel.findByIdAndUpdate({ _id: data.idAlumno }, alumno);
+
+      //enviar email de confirmación:
+      sendTpConfirmation(
+        alumno.email,
+        data.fecha,
+        data.title,
+        data.clase,
+        data.anio
+      );
+
+      return res.json({
         status: 200,
         message: "Archivo cargado correctamente.",
         tp,

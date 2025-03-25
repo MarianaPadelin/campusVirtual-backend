@@ -80,7 +80,7 @@ router.get(
   }
 );
 
-//Subir material didáctico
+//Subir material didáctico (cargar archivo)
 router.post(
   "/",
   authMiddleware,
@@ -89,6 +89,8 @@ router.post(
   async (req, res) => {
     try {
       const data = req.body;
+
+      console.log(data)
       if (!req.file) {
         return res.json({
           status: 404,
@@ -103,6 +105,7 @@ router.post(
         url: req.file.path,
         clase: data.clase,
         año: data.anio,
+        description: data.description
       };
 
       const archivoExiste = await materialModel.findOne({
@@ -118,7 +121,6 @@ router.post(
         });
       }
 
-      const response = await materialModel.create(archivo);
 
       //Lo agrego a la clase:
 
@@ -132,11 +134,82 @@ router.post(
           message: "No se encontró la clase.",
         });
       }
+      const response = await materialModel.create(archivo);
 
       clase.archivos.push(response);
 
       await clasesModel.findByIdAndUpdate({ _id: clase._id }, clase);
-      res.json({
+     return res.json({
+        status: 200,
+        message: "Archivo cargado correctamente.",
+      });
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
+  }
+);
+
+
+//Subir material didáctico (link)
+router.post(
+  "/link",
+  authMiddleware,
+  authorization("admin"),
+  async (req, res) => {
+    try {
+      const data = req.body;
+      console.log(data)
+      //primero creo el archivo en su coleccion material
+      const archivo = {
+        nombre: data.title,
+        fecha: data.fecha,
+        url: data.link,
+        clase: data.clase,
+        año: data.anio,
+        description: data.description
+      };
+
+      
+     if (!data.link) {
+       return res.json({
+         status: 404,
+         message: "Debe poner un link",
+       });
+     }
+      const archivoExiste = await materialModel.findOne({
+        nombre: data.title,
+        clase: data.clase,
+        año: data.anio,
+      });
+
+      if (archivoExiste) {
+        return res.json({
+          status: 400,
+          message: "Ya existe un archivo con ese nombre",
+        });
+      }
+
+
+      //Lo agrego a la clase:
+      const clase = await clasesModel.findOne({
+        nombre: data.clase,
+        año: data.anio,
+      });
+      if (!clase) {
+        return res.json({
+          status: 404,
+          message: "No se encontró la clase.",
+        });
+      }
+      const response = await materialModel.create(archivo);
+
+      clase.archivos.push(response);
+
+      await clasesModel.findByIdAndUpdate({ _id: clase._id }, clase);
+      return res.json({
         status: 200,
         message: "Archivo cargado correctamente.",
       });

@@ -73,7 +73,7 @@ export const sendComprobante = async (email, fecha, importe) => {
   }
 };
 
-export const sendTpConfirmation = async (email, fecha, nombre, clase) => {
+export const sendTpConfirmation = async (email, fecha, nombre, clase, año) => {
   try {
     let result = transporter.sendMail({
       from: "Campus virtual circo de las artes - " + config.emailAcount,
@@ -85,6 +85,7 @@ export const sendTpConfirmation = async (email, fecha, nombre, clase) => {
         <li>Fecha de carga: ${fecha}</li>
         <li>Nombre del archivo: ${nombre}</li>
         <li>Clase: ${clase}</li>
+        <li>Año: ${año}
         </ul>
       </p>
       </div>`,
