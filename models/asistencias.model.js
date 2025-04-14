@@ -3,7 +3,7 @@ import { Schema, model } from "mongoose";
 const asistenciasSchema = new Schema({
   clase: String,
   fecha: String,
-  id_alumno: { type: Schema.Types.ObjectId },
+  id_alumno: { type: Schema.Types.ObjectId, ref: "alumnos" },
   asistencia: Boolean,
 });
 

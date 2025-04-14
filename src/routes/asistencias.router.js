@@ -2,9 +2,27 @@ import { Router } from "express";
 import { alumnosModel } from "../../models/alumnos.model.js";
 import { asistenciasModel } from "../../models/asistencias.model.js";
 import { authorization, authMiddleware } from "../utils/utils.js";
-import { clasesModel } from "../../models/clases.model.js";
+import dayjs from "dayjs";
 
 const router = Router();
+
+router.get("/:clase/:date", authMiddleware, authorization("admin"), async(req, res) => {
+  try{
+    const {clase, date} = req.params;
+    const fecha = dayjs(date).format("DD/MM/YYYY");
+
+    const response = await asistenciasModel.find({clase: clase, fecha: fecha}).populate("id_alumno")
+    return res.json({
+      status: 200,
+      response
+    });
+  }catch(error){
+     return res.json({
+       message: "Error",
+       error,
+     });
+  }
+})
 
 router.post("/", authMiddleware, authorization("admin"), async (req, res) => {
   try {

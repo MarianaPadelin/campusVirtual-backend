@@ -116,4 +116,4 @@ Final:
 => subir links en cargar material y en tp ✓
 => borrar el material en cloudinary cuando se elimina un archivo? 
 
-=> cambiar lo de secure y sameSite
+=> cambiar lo de secure y sameSite en index
