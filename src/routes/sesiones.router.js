@@ -113,25 +113,7 @@ router.post("/login", async (req, res) => {
     };
     console.log("datos del usuario en sesiones", req.session.user); //TERMINO
 
-    //inicio la sesión con jwt
-
-    // const tokenUser = {
-    //   email: userExists.email,
-    //   role: userExists.role,
-    // };
-    // // console.log(tokenUser);
-    // const access_token = generateJWToken(tokenUser);
-    // console.log(tokenUser);
-
-    // res.cookie("jwtCookieToken", access_token, {
-    //   httpOnly: true, // Prevents JavaScript access for security
-    //   secure: true, // Use only in HTTPS environments
-    //   sameSite: "None", // Required for cross-site requests when using credentials
-
-    //   maxAge: 2 * 60 * 60 * 1000, // 2 hours
-    // });
-
-    // Save the session to make sure it persists
+  
     req.session.save((err) => {
       if (err) {
         console.error("❌ Error al guardar la sesión:", err);
@@ -152,25 +134,6 @@ router.post("/login", async (req, res) => {
 
     });
    
-    // if (
-    //   datosLogin.email === config.adminMail ||
-    //   datosLogin.email === config.adminMail2 ||
-    //   datosLogin.email === config.adminMail3
-    // ) {
-    //   return res.json({
-    //     status: 201,
-    //     tokenUser,
-    //     message: "Admin logueado correctamente",
-    //     jwt: access_token,
-    //   });
-    // }
-    // return res.json({
-    //   status: 200,
-    // tokenUser,
-    //   message: "Usuario logueado correctamente",
-    // jwt: access_token,
-    //   user: req.session.user
-    // });
   } catch (error) {
     return res.json({
       message: "Error",
@@ -273,18 +236,14 @@ router.get("/logout", (req, res) => {
           message: "Error al cerrar la sesión",
         });
       }
-      // res.clearCookie("jwtCookieToken", {
-      //   httpOnly: true, // Ensure the cookie isn't accessible via JavaScript
-      //   secure: true,
-      //   sameSite: "None", // This should match how you're setting the cookie
-      // });
+    
       res.clearCookie("connect.sid", {
         path: "/",
         httpOnly: true,
-        secure: true,
-        // secure: config.environment === "prod" ? true: false,
-        sameSite: "none"
-        // sameSite: config.environment === "prod" ? "None": "Lax", // Allows some cross-site requests
+        // secure: true,
+        secure: config.environment === "prod",
+        // sameSite: "none"
+        sameSite: config.environment === "prod" ? "none": "lax", // Allows some cross-site requests
       });
       console.log("sesión cerrada")
       return res.json({

@@ -62,11 +62,11 @@ app.use(
     }),
     //nuevo
     cookie: {
-      secure: true,
-      // secure: config.environment === "prod" ? true: false, // Only works on HTTPS (set to false for local dev)
+      // secure: true,
+      secure: config.environment === "prod", // Only works on HTTPS (set to false for local dev)
       httpOnly: true, // Prevents client-side access
-      // sameSite: config.environment === "prod" ? "None": "Lax", // Allows some cross-site requests
-      sameSite: "none",
+      sameSite: config.environment === "prod" ? "none": "lax", // Allows some cross-site requests
+      // sameSite: "none",
       maxAge: 60 * 60 * 1000,
     }, //termina lo nuevo
     secret: secret,
@@ -110,6 +110,11 @@ app.use(cookieParser());
 
 app.use(express.static("/public"));
 
+
+app.get("/session/ping", (req, res) => {
+  res.status(200).json({ message: "pong" });
+});
+
 //Nodemailer
 app.use("/email", email_router);
 
@@ -127,5 +132,5 @@ app.use("/tp", tp_router)
 
 // agarrar datos de usuario para cuando se recarga la página
 app.use("/user", user_router);
-
+console.log("🔥 Server running in", config.environment, "mode");
 app.listen(PORT, () => console.log(`Servidor en puerto ${PORT}`));
