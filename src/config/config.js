@@ -16,7 +16,8 @@ console.log("Modo de persistencia en: " + persistence);
 console.log("Environment: " + environment);
 
 export default {
-  environment: environment,
+  // environment: environment,
+  environment: process.env.environment,
   port: process.env.PORT || 3000,
   mongoUrl: process.env.MONGO_URL,
   secret: process.env.secret,
