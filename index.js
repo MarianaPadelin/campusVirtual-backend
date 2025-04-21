@@ -54,18 +54,19 @@ app.use(express.urlencoded({ extended: true }));
 app.set("trust proxy", 1);
 app.use(
   session({
+    proxy: true,
     //almaceno los datos de sesión en mongo atlas
     store: MongoStore.create({
       mongoUrl: MONGO_URL,
       // mongoOptions:{ useNewUrlParser: true, useUnifiedTopology: true},
-      ttl: 60 * 60, 
+      ttl: 60 * 60,
     }),
     //nuevo
     cookie: {
       // secure: true,
       secure: config.environment === "prod", // Only works on HTTPS (set to false for local dev)
       httpOnly: true, // Prevents client-side access
-      sameSite: config.environment === "prod" ? "none": "lax", // Allows some cross-site requests
+      sameSite: config.environment === "prod" ? "none" : "lax", // Allows some cross-site requests
       // sameSite: "none",
       maxAge: 60 * 60 * 1000,
     }, //termina lo nuevo
