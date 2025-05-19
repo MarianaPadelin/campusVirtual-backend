@@ -41,6 +41,7 @@ app.use(
     // allowedHeaders: ["Content-Type", "Authorization"],
 
     methods: ["POST", "GET", "PUT", "DELETE"],
+    optionsSuccessStatus: 200,
   })
 );
 
@@ -63,11 +64,11 @@ app.use(
     }),
     //nuevo
     cookie: {
-      // secure: true,
-      secure: config.environment === "prod", // Only works on HTTPS (set to false for local dev)
+      secure: true,
+      // secure: config.environment === "prod", // Only works on HTTPS (set to false for local dev)
       httpOnly: true, // Prevents client-side access
-      sameSite: config.environment === "prod" ? "none" : "lax", // Allows some cross-site requests
-      // sameSite: "none",
+      // sameSite: config.environment === "prod" ? "none" : "lax", // Allows some cross-site requests
+      sameSite: "none",
       maxAge: 60 * 60 * 1000,
     }, //termina lo nuevo
     secret: secret,
