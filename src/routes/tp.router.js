@@ -30,7 +30,7 @@ router.get("/", authMiddleware, authorization("admin"), async (req, res) => {
   }
 });
 
-//ver los tps de un alumno por id
+//ver los tps de un alumno por id de alumno
 router.get(
   "/:id",
   authMiddleware,
@@ -63,6 +63,66 @@ router.get(
   }
 );
 
+//mostrar todos los tps de un alumno para esa materia y ese año
+router.get(
+  "/admin/:id/:clase/:year",
+  authMiddleware,
+  authorization("admin"),
+  async (req, res) => {
+    try {
+      const { id, clase, year } = req.params;
+      const tps = await tpModel.find({ idAlumno : id, clase: clase, año: year})
+
+      if(!tps){
+        return res.json({
+          status: 404,
+          message: "No se encontraron trabajos prácticos",
+        });
+      }
+      return res.json({
+        status: 200,
+        tps,
+      });
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
+  }
+);
+
+//mostrar los tps por clase por id alumno (alumno)
+router.get(
+  "/alumno/:id/:clase",
+  authMiddleware,
+  authorization("alumno"),
+  async (req, res) => {
+    try {
+      const { id, clase } = req.params;
+
+      const tps = await tpModel.find({ idAlumno: id, clase: clase});
+
+      if (!tps) {
+        return res.json({
+          status: 404,
+          message: "No se encontraron trabajos prácticos",
+        });
+      }
+      return res.json({
+        status: 200,
+        tps,
+      });
+    } catch (error) {
+      return res.json({
+        message: "Error",
+        error,
+      });
+    }
+  }
+);
+
+
 //subir un tp (alumno)
 router.post(
   "/",
@@ -90,7 +150,7 @@ router.post(
         url: req.file.path,
         año: data.anio,
       };
-      console.log("clase: ", data.clase, "año: ", data.anio)
+      console.log("clase: ", data.clase, "año: ", data.anio);
       const clase = await clasesModel.findOne({
         nombre: data.clase,
         año: data.anio,
@@ -158,12 +218,12 @@ router.post(
         año: data.anio,
       };
 
-     if (!data.link){
-       return res.json({
-         status: 404,
-         message: "Debe poner un link",
-       });
-     }
+      if (!data.link) {
+        return res.json({
+          status: 404,
+          message: "Debe poner un link",
+        });
+      }
 
       const clase = await clasesModel.findOne({
         nombre: data.clase,
@@ -178,7 +238,7 @@ router.post(
       const response = await tpModel.create(tp);
       const alumno = await alumnosModel.findById({ _id: data.idAlumno });
       if (!alumno) {
-        console.log("llego a no hay alumno")
+        console.log("llego a no hay alumno");
         return res.json({
           status: 404,
           message: "No se encontró el alumno.",
@@ -242,4 +302,48 @@ router.delete(
     }
   }
 );
+
+//subir la nota y devolución del tp(admin)
+router.post(
+  "/sendNota/:id",
+  authMiddleware,
+  authorization("admin"),
+  async (req, res) => {
+    console.log("llego a la ruta");
+    try {
+      //id del tp
+      const { id } = req.params;
+      const data = req.body;
+      console.log("data recibida", data.notaTP);
+
+      //busco el tp por id y le agrego las props nota y devolución
+      const tp = await tpModel.findById(id);
+      if (!tp) {
+        return res.json({
+          status: 404,
+          message: "No se encontró el trabajo práctico",
+        });
+      }
+
+      await tpModel.findByIdAndUpdate({
+        _id: id },
+       { nota: data.notaTP,
+        devolucion: data.devolucionTP }
+      );
+
+      return res.json({
+        status: 200,
+        message: "Nota ingresada con éxito"
+      })
+
+    } catch (error) {
+      return res.json({
+        status: 500,
+        message: "Error",
+        error,
+      });
+    }
+  }
+);
+
 export default router;

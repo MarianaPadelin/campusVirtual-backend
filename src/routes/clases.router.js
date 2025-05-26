@@ -118,9 +118,8 @@ router.get(
           message: "Año no encontrado",
         });
       }
-
+      
       const result = clase.alumnos;
-
       return res.json({
         status: 200,
         result,

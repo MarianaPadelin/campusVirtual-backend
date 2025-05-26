@@ -117,3 +117,11 @@ Final:
 => borrar el material en cloudinary cuando se elimina un archivo? 
 
 => cambiar lo de secure y sameSite en index
+
+
+TODO: 
+vista alumno de tps. Si hay nota se muestra con devolución, y se desactiva el botón de eliminar archivo
+
+vista admin filtrado por clase y agrupar por alumno
+
+diseño responsive

@@ -10,7 +10,7 @@ router.get(
   authMiddleware,
   authorization(["admin", "alumno"]),
   (req, res) => {
-    console.log("ruta user: ", req.user)
+    // console.log("ruta user: ", req.user)
     res.json({
       user: req.user,
     });
