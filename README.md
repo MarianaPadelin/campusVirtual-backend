@@ -120,8 +120,8 @@ Final:
 
 
 TODO: 
-vista alumno de tps. Si hay nota se muestra con devolución, y se desactiva el botón de eliminar archivo
+vista alumno de tps. Si hay nota se muestra con devolución, y se desactiva el botón de eliminar archivo ✓
 
-vista admin filtrado por clase y agrupar por alumno
+vista admin filtrado por clase y agrupar por alumno ✓
 
-diseño responsive
+diseño responsive ✓
