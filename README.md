@@ -125,3 +125,5 @@ vista alumno de tps. Si hay nota se muestra con devolución, y se desactiva el b
 vista admin filtrado por clase y agrupar por alumno ✓
 
 diseño responsive ✓
+
+
